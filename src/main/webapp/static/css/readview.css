@@ -1,0 +1,139 @@
+body {
+    display: block;
+    margin: 0px;
+}
+table {
+    white-space: pre-wrap !important;
+    font-family: monospace;
+    border-spacing: 0px;
+    line-height: 35px;/*add by wangshilian*/
+    font-size: xx-large;
+}
+td {
+    vertical-align: baseline;
+    padding: 0px !important;
+}
+
+/*TEST*/
+tr{
+    border: solid 1px green;
+}
+
+.line-gutter-backdrop {
+    box-sizing: border-box;
+    width: 31px;
+    background-color: rgb(240, 240, 240);
+    user-select: none;
+    position: absolute;
+    z-index: -1;
+    left: 0px;
+    top: 0px;
+    height: 100%;
+    padding: 0px 4px !important;
+    border-right: 1px solid rgb(187, 187, 187) !important;
+}
+.line-number {
+    box-sizing: border-box;
+    width: 31px;
+    background-color: rgb(240, 240, 240);
+    user-select: none;
+    text-align: right;
+    color: rgb(128, 128, 128);
+    word-break: normal;
+    white-space: nowrap;
+    font-size: 9px;
+    font-family: Helvetica;
+    padding: 0px 4px !important;
+    border-right: 1px solid rgb(187, 187, 187) !important;
+}
+.line-number::before {
+    content: attr(value);
+}
+
+.line-content {
+    padding: 0px 5px !important;
+}
+a:-webkit-any-link {
+    color: -webkit-link;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+
+.html-attribute-value {
+    color: rgb(26, 26, 166);
+}
+.html-attribute-name {
+    color: rgb(153, 69, 0);
+}
+.html-tag {
+    color: rgb(136, 18, 128);
+}
+.html-comment {
+    color: rgb(35, 110, 37);
+}
+.html-resource-link {
+    color: rgb(0, 0, 238);
+}
+.html-attribute-value {
+    color: rgb(26, 26, 166);
+}
+
+ruby.ll{
+    cursor:pointer;
+    position: relative;
+}
+ruby.lo{
+    cursor:pointer;
+    position: relative;
+    color:yellow;
+}
+ruby.lh{
+    cursor:pointer;
+    color:yellow;
+}
+
+ruby.levelUnknown{
+    cursor:pointer;
+    background-color: rgba(255,200,200,0.5);
+}
+
+/*add from codemirror*/
+.extras {
+	z-index: 10;
+	position: absolute;
+	top: 0;
+	right: 16px;
+	padding: 10px 5px 10px 15px
+}
+
+.extras a {
+	transition: all ease-in-out 250ms;
+	visibility: visible;
+	opacity: .3
+}
+
+.extras:hover a {
+	visibility: visible;
+	opacity: 1
+}
+
+.extras .icon {
+	display: block;
+	width: 40px;
+	height: 40px;
+	background-size: 40px;
+	background-color: transparent;
+	margin-bottom: 5px;
+	border-radius: 4px
+}
+
+.extras .icon svg {
+	width: 40px;
+	height: 40px;
+	fill: #000
+}
+
+.extras .icon:hover,.extras.auto-highlight-off .icon {
+	background-color: #ccc
+}
