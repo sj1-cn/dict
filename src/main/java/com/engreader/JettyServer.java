@@ -51,6 +51,7 @@ public class JettyServer {
 		ServletHolder holderUserWordsHandler = new ServletHolder(userWordsHandler);
 		context.addServlet(holderUserWordsHandler, "/api/userwords/");
 		context.addServlet(holderUserWordsHandler, "/api/userwords/*");
+		context.addServlet(StanfordCoreNLPHandler.class, "/api/NLPWords");
 
 		HandlerList handlers = new HandlerList();
 		handlers.setHandlers(new Handler[] { resource_handler, context });
