@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.engreader.entity.WordDefine;
 
 import edu.stanford.nlp.ling.CoreAnnotations;
@@ -88,6 +91,7 @@ import edu.stanford.nlp.util.CoreMap;
  * 原文链接：https://blog.csdn.net/l919898756/article/details/81670228
  */
 public class StanfordNLPStemmer {
+	Logger log = LoggerFactory.getLogger(getClass());
 
 	public StanfordNLPStemmer(Map<String, WordDefine> cocaWords) {
 		super();
@@ -152,9 +156,9 @@ public class StanfordNLPStemmer {
 			int sentenceOffsetBegin = sentence.get(CoreAnnotations.CharacterOffsetBeginAnnotation.class); // 获取对应上面word的词元信息，即我所需要的词形还原后的单词
 			int sentenceOffsetEnd = sentence.get(CoreAnnotations.CharacterOffsetEndAnnotation.class); // 获取对应上面word的词元信息，即我所需要的词形还原后的单词
 
-//			if (sentenceOffsetBegin > offset) {
-//				sb.append(srcText.substring(offset, sentenceOffsetBegin).replaceAll("\n", "<br/>"));
-//			}
+			if (sentenceOffsetBegin > offset) {
+				sb.append(srcText.substring(offset, sentenceOffsetBegin).replaceAll("\n", "<br/>"));
+			}
 			offset = sentenceOffsetBegin;
 
 //			sb.append('{');
@@ -165,9 +169,9 @@ public class StanfordNLPStemmer {
 				int wordOffsetBegin = token.get(CoreAnnotations.CharacterOffsetBeginAnnotation.class); // 获取对应上面word的词元信息，即我所需要的词形还原后的单词
 				int wordOffsetEnd = token.get(CoreAnnotations.CharacterOffsetEndAnnotation.class); // 获取对应上面word的词元信息，即我所需要的词形还原后的单词
 
-//				if (wordOffsetBegin > offset) {
-//					sb.append(srcText.substring(offset, wordOffsetBegin).replaceAll("\n", "<br/>"));
-//				}
+				if (wordOffsetBegin > offset) {
+					sb.append(srcText.substring(offset, wordOffsetBegin).replaceAll("\n", "<br/>"));
+				}
 
 				boolean comma = false;
 				WordDefine cocaWord;
@@ -260,7 +264,7 @@ public class StanfordNLPStemmer {
 //			sb.append('}');
 		}
 
-		System.out.println(sb.toString());
+		log.debug("{}",sb);
 		return sb;
 	}
 

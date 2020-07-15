@@ -88,9 +88,6 @@ window.onload = function () {
         );
     }
 
-    
-
-
     function bindRubyClick() {
         $("ruby").click(function (e) {
             if (e.target.nodeName === "RUBY") {
