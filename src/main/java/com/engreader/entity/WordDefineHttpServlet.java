@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class WordDefineHandler extends HttpServlet {
+public class WordDefineHttpServlet extends HttpServlet {
 
 	WordDefineStore store;
 	/**
@@ -15,7 +15,7 @@ public class WordDefineHandler extends HttpServlet {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public WordDefineHandler(WordDefineStore store) {
+	public WordDefineHttpServlet(WordDefineStore store) {
 		super();
 		this.store = store;
 

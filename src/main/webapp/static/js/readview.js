@@ -71,7 +71,7 @@ window.onload = function () {
     }
 
     function render(str) {
-        $.post("/api/NLPWords?x=" + Math.random(), { codecontent: str },
+        $.post("/ana/words?x=" + Math.random(), { codecontent: str },
             function (data) {
                 let lines = data.split("<br/>");
                 // console.log(lines.length)

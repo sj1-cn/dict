@@ -23,7 +23,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.alibaba.fastjson.JSON;
-import com.engreader.CocaWord;
 import com.engreader.StanfordNLPStemmer;
 import com.engreader.db.H2DB;
 import com.engreader.db.WordDefineDB;
@@ -107,6 +106,7 @@ class WordDefineDbTest {
 			for (WordDefine wordDefine : wd) {
 				map.put(wordDefine.word, wordDefine);
 			}
+			System.out.println("insert from " + filename + " " + wd.size());
 		}
 
 		{// Coca20000
@@ -150,6 +150,8 @@ class WordDefineDbTest {
 
 			db.update(needUpdated);
 			db.insert(others);
+			System.out.println("update from COCA20000 " + needUpdated.size());
+			System.out.println("insert from COCA20000 " + others.size());
 		}
 
 		{// Coca60000
@@ -202,6 +204,8 @@ class WordDefineDbTest {
 
 			db.update(needUpdated);
 			db.insert(others);
+			System.out.println("update from COCA60000 " + needUpdated.size());
+			System.out.println("insert from COCA60000 " + others.size());
 		}
 //		ps.getRecords()
 	}

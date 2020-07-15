@@ -6,8 +6,8 @@ table {
     white-space: pre-wrap !important;
     font-family: monospace;
     border-spacing: 0px;
-    line-height: 35px;/*add by wangshilian*/
-    font-size: xx-large;
+    line-height: 2em;/*add by wangshilian*/
+    font-size: 2em;
 }
 td {
     vertical-align: baseline;

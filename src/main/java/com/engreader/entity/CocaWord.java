@@ -1,4 +1,4 @@
-package com.engreader;
+package com.engreader.entity;
 
 public class CocaWord {
 	@Override

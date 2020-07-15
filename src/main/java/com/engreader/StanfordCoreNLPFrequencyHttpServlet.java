@@ -1,26 +1,15 @@
 package com.engreader;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
-import javax.management.RuntimeErrorException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
-import org.eclipse.jetty.io.RuntimeIOException;
-
 import com.alibaba.fastjson.JSONObject;
-import com.engreader.StanfordNLPStemmer.WordFrequency;
 
-public class StanfordCoreNLPFrequencyHandler extends HttpServlet {
+public class StanfordCoreNLPFrequencyHttpServlet extends HttpServlet {
 
 	/**
 	 * 
@@ -28,7 +17,7 @@ public class StanfordCoreNLPFrequencyHandler extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 
-	public StanfordCoreNLPFrequencyHandler() {
+	public StanfordCoreNLPFrequencyHttpServlet() {
 		super();
 	
 
@@ -61,14 +50,14 @@ public class StanfordCoreNLPFrequencyHandler extends HttpServlet {
 		String codecontent = req.getParameter("codecontent");
 		codecontent = codecontent.replaceAll("youjequalsign", "=").replaceAll("youjscryoujipttag", "script");
 
-		ArrayList<WordFrequency> awe = StanfordNLPStemmer.parseWordFrequency(codecontent);
-
+//		ArrayList<WordFrequency> awe = StanfordNLPStemmer.parseWordFrequency(codecontent);
+//
 		StringBuffer sb = new StringBuffer();
-
-		for (int i = 0; i < awe.size(); i++) {
-			sb.append(awe.get(i).toString());
-			sb.append('\n');
-		}
+//
+//		for (int i = 0; i < awe.size(); i++) {
+//			sb.append(awe.get(i).toString());
+//			sb.append('\n');
+//		}
 
 		resp.setCharacterEncoding("utf-8");
 		resp.getWriter().write(sb.toString());

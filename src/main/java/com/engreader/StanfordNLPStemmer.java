@@ -1,23 +1,12 @@
 package com.engreader;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
-import org.eclipse.jetty.io.RuntimeIOException;
+import com.engreader.entity.WordDefine;
 
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
@@ -100,63 +89,14 @@ import edu.stanford.nlp.util.CoreMap;
  */
 public class StanfordNLPStemmer {
 
-	public static void main(String[] args) throws IOException {
-		BufferedReader bf = new BufferedReader(new FileReader(new File(args[0])));
-		StringBuilder sb = new StringBuilder();
-		String line = null;
-		while ((line = bf.readLine()) != null) {
-			sb.append(line.toLowerCase());
-			sb.append(" ");
-		}
-		bf.close();
-		String srcText = sb.toString();
-
-		ArrayList<WordFrequency> awe = parseWordFrequency(srcText);
-//		awe.sort(new Comparator<WordFrequency>() {
-//
-//			@Override
-//			public int compare(WordFrequency o1, WordFrequency o2) {
-//				// TODO Auto-generated method stub
-//				return -(o1.frequency-o2.frequency);
-//			}
-//			
-//		});
-		BufferedWriter bw = new BufferedWriter(new FileWriter(new File(args[0] + ".words")));
-
-		for (int i = 0; i < awe.size(); i++) {
-			bw.write(awe.get(i).toString());
-			bw.write('\n');
-		}
-		bw.close();
-
-//        pipeline.prettyPrint(document, System.out);
+	public StanfordNLPStemmer(Map<String, WordDefine> cocaWords) {
+		super();
+		this.cocaWords = cocaWords;
 	}
 
-	static Map<String, CocaWord> cocaWords;
-	static {
-		try {
-			InputStream is = StanfordNLPStemmer.class.getClassLoader().getResourceAsStream("words20000.csv");
-			CSVParser csvParser = CSVParser.parse(is, Charset.forName("utf-8"), CSVFormat.EXCEL);
+	Map<String, WordDefine> cocaWords;
 
-			cocaWords = new HashMap<>();
-
-			List<CSVRecord> res = csvParser.getRecords();
-
-			for (int i = res.size() - 1; i >= 0; i--) {
-				CSVRecord r = res.get(i);
-				cocaWords.put(/* r.get(2) + "_" + */ r.get(1),
-						new CocaWord(Integer.parseInt(r.get(0)), r.get(1), r.get(2),
-								Integer.parseInt(r.get(4)), (int) (Float.parseFloat(r.get(5)) * 100), r.get(9),
-								r.get(10)));
-			}
-
-		} catch (IOException e) {
-			e.printStackTrace();
-			throw new RuntimeIOException(e);
-		}
-	}
-
-	public static ArrayList<WordFrequency> parseWordFrequency(String srcText) {
+	public ArrayList<WordFrequency> parseWordFrequency(String srcText) {
 		Properties props = new Properties(); // set up pipeline properties
 		props.put("annotators", "tokenize, ssplit, pos, lemma");// , ner, truecase, parse, dcoref"); // 分词、分句、词性标注和次元信息。
 		StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
@@ -196,7 +136,7 @@ public class StanfordNLPStemmer {
 		return awe;
 	}
 
-	public static StringBuffer parseWords(String srcText) {
+	public StringBuffer parseWords(String srcText) {
 		Properties props = new Properties(); // set up pipeline properties
 		props.put("annotators", "tokenize, ssplit, pos, lemma");// , ner, truecase, parse, dcoref"); // 分词、分句、词性标注和次元信息。
 		StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
@@ -212,9 +152,9 @@ public class StanfordNLPStemmer {
 			int sentenceOffsetBegin = sentence.get(CoreAnnotations.CharacterOffsetBeginAnnotation.class); // 获取对应上面word的词元信息，即我所需要的词形还原后的单词
 			int sentenceOffsetEnd = sentence.get(CoreAnnotations.CharacterOffsetEndAnnotation.class); // 获取对应上面word的词元信息，即我所需要的词形还原后的单词
 
-			if (sentenceOffsetBegin > offset) {
-				sb.append(srcText.substring(offset, sentenceOffsetBegin).replaceAll("\n", "<br/>"));
-			}
+//			if (sentenceOffsetBegin > offset) {
+//				sb.append(srcText.substring(offset, sentenceOffsetBegin).replaceAll("\n", "<br/>"));
+//			}
 			offset = sentenceOffsetBegin;
 
 //			sb.append('{');
@@ -225,12 +165,12 @@ public class StanfordNLPStemmer {
 				int wordOffsetBegin = token.get(CoreAnnotations.CharacterOffsetBeginAnnotation.class); // 获取对应上面word的词元信息，即我所需要的词形还原后的单词
 				int wordOffsetEnd = token.get(CoreAnnotations.CharacterOffsetEndAnnotation.class); // 获取对应上面word的词元信息，即我所需要的词形还原后的单词
 
-				if (wordOffsetBegin > offset) {
-					sb.append(srcText.substring(offset, wordOffsetBegin).replaceAll("\n", "<br/>"));
-				}
+//				if (wordOffsetBegin > offset) {
+//					sb.append(srcText.substring(offset, wordOffsetBegin).replaceAll("\n", "<br/>"));
+//				}
 
 				boolean comma = false;
-				CocaWord cocaWord;
+				WordDefine cocaWord;
 				if (cocaWords.containsKey(word)) {
 					cocaWord = cocaWords.get(word);
 				} else if (cocaWords.containsKey(lema)) {
@@ -257,44 +197,44 @@ public class StanfordNLPStemmer {
 				}
 
 				if (cocaWord != null) {
-					if (cocaWord.level > 5) {
+					if (cocaWord.getCocaLevel() > 5) {
 //						sb.append("<span class=\"w\">");
 						sb.append("<ruby class='w lo'>");
 						sb.append(word);
 						sb.append("<rt>");
-						sb.append(cocaWord.meaningTip);
+						sb.append(cocaWord.getMeanBriefZh());
 						sb.append("</rt>");
 						sb.append("</ruby>");
 //						sb.append("<span class=\"tooltiptext\">");
 //						sb.append(cocaWord.meaning);
 //						sb.append("</span>");
 //						sb.append("</span>");
-					} else if (cocaWord.level > 3) {
+					} else if (cocaWord.getCocaLevel() > 3) {
 //						sb.append("<span class=\"w\">");
-						sb.append("<ruby class='w lo l" + cocaWord.level + "'>");
+						sb.append("<ruby class='w lo l" + cocaWord.getCocaLevel() + "'>");
 						sb.append(word);
 						sb.append("<rt>");
-						sb.append(cocaWord.meaningTip);
+						sb.append(cocaWord.getMeanBriefZh());
 						sb.append("</rt>");
 						sb.append("</ruby>");
 //						sb.append("<span class=\"tooltiptext\">");
 //						sb.append(cocaWord.meaning);
 //						sb.append("</span>");
 //						sb.append("</span>");
-					} else if (cocaWord.level > 1) {
+					} else if (cocaWord.getCocaLevel() > 1) {
 //						sb.append("<span class=\"w\">");
-						sb.append("<ruby class='w ll l" + cocaWord.level + "'>");
+						sb.append("<ruby class='w ll l" + cocaWord.getCocaLevel() + "'>");
 						sb.append(word);
 						sb.append("<rt>");
-						sb.append(cocaWord.meaningTip);
+						sb.append(cocaWord.getMeanBriefZh());
 						sb.append("</rt>");
 						sb.append("</ruby>");
 //						sb.append("<span class=\"tooltiptext\">");
 //						sb.append(cocaWord.meaning);
 //						sb.append("</span>");
 //						sb.append("</span>");
-					} else if (cocaWord.level > 1) {
-						sb.append("<ruby class='w l" + cocaWord.level + "'>");
+					} else if (cocaWord.getCocaLevel() > 1) {
+						sb.append("<ruby class='w l" + cocaWord.getCocaLevel() + "'>");
 						sb.append(word);
 //						sb.append("<rt>");
 //						sb.append("<span class=\"tooltiptext\">");

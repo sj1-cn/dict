@@ -1,10 +1,9 @@
 package com.engreader;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,15 +11,28 @@ import java.util.Map;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.engreader.db.H2DB;
+import com.engreader.db.WordDefineDB;
+import com.engreader.entity.CocaWord;
+import com.engreader.entity.WordDefineStore;
+
 class StanfordNLPStemmerTest {
+	StanfordNLPStemmer stemmer;
+
+	@BeforeEach
+	void setup() throws IOException, ClassNotFoundException, SQLException {
+		H2DB h2db = H2DB.connect();
+		WordDefineDB db = new WordDefineDB(h2db);
+		WordDefineStore store = new WordDefineStore(db);
+		stemmer = new StanfordNLPStemmer(store.getWords());
+	}
 
 	@Test
-	void test() throws IOException {
-		StanfordNLPStemmer stemmer = new StanfordNLPStemmer();
+	void test() throws IOException, ClassNotFoundException, SQLException {
 		stemmer.parseWords("I like you!");
-
 	}
 
 	@Test
@@ -44,7 +56,6 @@ class StanfordNLPStemmerTest {
 
 	@Test
 	void test2() {
-		StanfordNLPStemmer stemmer = new StanfordNLPStemmer();
 		String sample = "		The Story of Ms. Marvel\n"
 				+ "		Until recently, Jersey City's Kamala Khan didn't think she was special.\n"
 				+ "		But one night not too long ago, everything changed. Kamala was caught in a\n"
@@ -57,7 +68,6 @@ class StanfordNLPStemmerTest {
 
 	@Test
 	void test3() {
-		StanfordNLPStemmer stemmer = new StanfordNLPStemmer();
 		String sample = " Super Hero .\n";
 		stemmer.parseWords(sample);
 	}

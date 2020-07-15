@@ -37,7 +37,7 @@ class UserWordsDbTest {
 		fail("Not yet implemented");
 	}
 
-//	@Test
+	@Test
 	void testCreateTable() {
 		store.createTable();
 		store.createIndex();

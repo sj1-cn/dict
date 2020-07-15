@@ -1,6 +1,5 @@
 package com.engreader.entity;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.util.List;
 
@@ -9,7 +8,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class UserWordsHandler extends HttpServlet {
+public class UserWordsHttpServlet extends HttpServlet {
 
 	UserWordsStore store;
 	/**
@@ -17,7 +16,7 @@ public class UserWordsHandler extends HttpServlet {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public UserWordsHandler(UserWordsStore store) {
+	public UserWordsHttpServlet(UserWordsStore store) {
 		super();
 		this.store = store;
 
