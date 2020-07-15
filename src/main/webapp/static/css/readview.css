@@ -86,11 +86,11 @@ ruby.ll{
 ruby.lo{
     cursor:pointer;
     position: relative;
-    color:yellow;
+    color: rgb(26, 26, 166);
 }
 ruby.lh{
     cursor:pointer;
-    color:yellow;
+    color: rgb(26, 26, 166);
 }
 
 ruby.levelUnknown{
