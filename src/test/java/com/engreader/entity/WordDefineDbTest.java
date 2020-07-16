@@ -114,10 +114,15 @@ class WordDefineDbTest {
 			List<WordDefine> others = new ArrayList<>();
 
 			List<CocaWord> cocas = readCocaWords("CSVFile/COCA20000.csv");
-			for (CocaWord cocaWord : cocas) {
+
+			for (int i = cocas.size() - 1; i >= 0; i--) {
+				CocaWord cocaWord = cocas.get(i);
+				if (cocaWord.lemma.equals("you")) {
+					System.out.println(cocaWord);
+				}
 				if (map.containsKey(cocaWord.getLemma())) {
 					WordDefine wordDefine = map.get(cocaWord.getLemma());
-					wordDefine.meanBriefZh = cocaWord.getMeaningTip();
+//					wordDefine.meanBriefZh = cocaWord.getMeaningTip();
 					wordDefine.pos = cocaWord.getPos();
 					wordDefine.cocaLevel = cocaWord.getLevel();
 					wordDefine.cocaRankFrequency = cocaWord.getRankFrequency();
@@ -224,6 +229,7 @@ class WordDefineDbTest {
 			String word = r.get(i++);
 			String accentUs = r.get(i++);
 			String meanZh = r.get(i++);
+			String meanBriefZh = filterBrief(meanZh);
 			int freq = (int) (Float.parseFloat(r.get(i++)) * 10);
 			String pos = null;
 
@@ -233,12 +239,39 @@ class WordDefineDbTest {
 				meanZh = meanZh.substring(from + 1);
 			}
 
-			WordDefine wd = new WordDefine(id, word, null, null, accentUs, meanZh, null, null, pos, freq,
+			WordDefine wd = new WordDefine(id, word, null, null, accentUs, meanZh, meanBriefZh, null, pos, freq,
 					new Timestamp(new Date().getTime()));
 			list.add(wd);
 		}
 		db.insert(list);
 		return list;
+	}
+
+	@Test
+	public void testFilter() {
+		assertEquals("灌木",filterBrief("灌木；灌木丛；矮树；  vi. 丛生；灌木般丛生；浓密（或茂密）地生长；生密枝；  vt. 加（金属）衬套于；加套管于；用耙耙平（耕地）；以灌木（或灌木丛）装饰（或覆盖、围绕、围住、支撑、标志、保护等）；  adj. （豆科植物等）如灌木般长得低矮的；粗野的；粗鲁的；粗糙但实用的"));
+		assertEquals("离开正路的人",filterBrief("n. 离开正路的人，反常的人；  adj. 偏离正轨的；异常的，畸变的"));
+		assertEquals("直的",filterBrief("adj. 直的；正直的；  adv. 直接地；不断地，一直地；立即；直地，笔直地；  n. 直线；直线部分"));	
+		
+	}
+	// 灌木；灌木丛；矮树； vi. 丛生；灌木般丛生；浓密（或茂密）地生长；生密枝； vt.
+	// 加（金属）衬套于；加套管于；用耙耙平（耕地）；以灌木（或灌木丛）装饰（或覆盖、围绕、围住、支撑、标志、保护等）； adj.
+	// （豆科植物等）如灌木般长得低矮的；粗野的；粗鲁的；粗糙但实用的
+	public String filterBrief(String meanZh) {
+		int i = 0;
+		char[] chars = meanZh.toCharArray();
+		for (; i < chars.length && 'a' <= chars[i] && chars[i] <= 'z'; i++) {
+
+		}
+		for (; i < chars.length && (chars[i] == ' ' || chars[i] == '.'); i++) {
+
+		}
+		int from = i;
+		for (; i < chars.length && Character.isLetter(chars[i]); i++) {
+
+		}
+
+		return meanZh.substring(from, i);
 	}
 
 	public void importCocaWordFromCsv(String filename) throws IOException {

@@ -31,7 +31,7 @@
 }
  
 /* Tooltip 文本 */
-.tooltip .tooltiptext {
+.w .tooltiptext {
     visibility: hidden;
     width: 120px;
     background-color: black;
@@ -44,6 +44,13 @@
     /* 定位 */
     position: absolute;
     z-index: 1;
+
+    min-width: 12em;
+    font-size: .6em;
+    line-height: 1em;
+    left: 0;
+    text-align: left;
+    padding: 0.6em;
 }
 
 rt{
@@ -54,7 +61,7 @@ rt{
 }
  
 /* 鼠标移动上去后显示提示框 */
-.tooltip:hover .tooltiptext {
+.w:hover .tooltiptext {
     visibility: visible;
 }
 

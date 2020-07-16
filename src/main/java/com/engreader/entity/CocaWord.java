@@ -21,6 +21,9 @@ public class CocaWord {
 			String meaning) {
 		this.level = (int) ((rankFrequency - 1) / 1000) + 1;
 		this.rankFrequency = rankFrequency;
+		if(lemma.equals("in")) {
+			System.out.println(this.level + " " + lemma);
+		}
 		this.lemma = lemma;
 		this.pos = pos;
 		this.rawFrequency = rawFrequency;

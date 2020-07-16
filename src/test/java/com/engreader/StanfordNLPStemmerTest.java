@@ -71,4 +71,9 @@ class StanfordNLPStemmerTest {
 		String sample = " Super Hero .\n";
 		stemmer.parseWords(sample);
 	}
+
+	@Test
+	void test4() {
+		stemmer.parseWords("“Aren’t you going to write about the magic person?” said Annie.");
+	}
 }

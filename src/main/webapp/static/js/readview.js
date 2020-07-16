@@ -15,7 +15,7 @@ window.onload = function () {
                 item.getAsString(function (str) {
                     // console.log(str);
                     backdrop.innerText = str;
-                    decorater(str);
+                    // decorater(str);
                     render(str);
                 });
                 break;
@@ -73,9 +73,11 @@ window.onload = function () {
     function render(str) {
         $.post("/ana/words?x=" + Math.random(), { codecontent: str },
             function (data) {
-                let lines = data.split("<br/>");
+                $("#content").html(data);
+                // let lines = data.split("<br/>");
                 // console.log(lines.length)
-                attachResultToTable(lines, table);
+
+                // attachResultToTable(lines, table);
                 $.each($("ruby"), function () {
                     console.log($(this).text());
                 });

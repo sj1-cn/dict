@@ -24,7 +24,8 @@ public class WordDefineHttpServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		resp.setCharacterEncoding("utf-8");
-
+		resp.setHeader("content-type", "application/json;chartset=uft-8");
+		
 		StringBuilder sb = new StringBuilder();
 		sb.append("{");
 		try {
@@ -53,6 +54,7 @@ public class WordDefineHttpServlet extends HttpServlet {
 		{
 			sb.append("\"id\":").append(w.id).append(',');
 			sb.append("\"word\":").append('\"').append(w.word).append('\"').append(',');
+			sb.append("\"cocaLevel\":").append('\"').append(w.cocaLevel).append('\"').append(',');
 			sb.append("\"tense\":").append('\"').append(w.tense).append('\"').append(',');
 			sb.append("\"accentEn\":").append('\"').append(w.accentEn).append('\"').append(',');
 			sb.append("\"accentUs\":").append('\"').append(w.accentUs).append('\"').append(',');

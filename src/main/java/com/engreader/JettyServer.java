@@ -62,6 +62,7 @@ public class JettyServer {
 		{
 			ServletHolder holder = initWordsServletHolder(store);
 			context.addServlet(holder, "/api/words/");
+			context.addServlet(holder, "/api/words/*");
 		}
 
 		HandlerList handlers = new HandlerList();

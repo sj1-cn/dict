@@ -99,47 +99,125 @@ public class StanfordNLPStemmer {
 	}
 
 	Map<String, WordDefine> cocaWords;
+//
+//	public ArrayList<WordFrequency> parseWordFrequency(String srcText) {
+//		Properties props = new Properties(); // set up pipeline properties
+//		props.put("annotators", "tokenize, ssplit, pos, lemma");// , ner, truecase, parse, dcoref"); // 分词、分句、词性标注和次元信息。
+//		StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
+//		Map<String, WordFrequency> wordFrequencies = new HashMap<>();
+//
+//		Annotation document = new Annotation(srcText);
+//		pipeline.annotate(document);
+//		List<CoreMap> sentences = document.get(CoreAnnotations.SentencesAnnotation.class);
+//		for (CoreMap sentence : sentences) {
+//			for (CoreLabel token : sentence.get(CoreAnnotations.TokensAnnotation.class)) {
+//				String word = token.get(CoreAnnotations.TextAnnotation.class); // 获取单词信息
+//				String lema = token.get(CoreAnnotations.LemmaAnnotation.class); // 获取对应上面word的词元信息，即我所需要的词形还原后的单词
+//				String pos = token.get(CoreAnnotations.PartOfSpeechAnnotation.class); // 获取对应上面word的词元信息，即我所需要的词形还原后的单词
+//
+//				String lemakey = lema.toLowerCase();
+//				if ('a' <= lemakey.charAt(0) && lemakey.charAt(0) <= 'z') {
+//					if (wordFrequencies.containsKey(lemakey)) {
+//						wordFrequencies.get(lemakey).add(word);
+//					} else {
+//						wordFrequencies.put(lemakey, new WordFrequency(lemakey, word));
+//					}
+//					// System.out.print("[" + word + "/" + lema + " [" + pos + "] " +
+//					// token.toString() + "]");
+//
+//				} else {
+//					// System.out.println(pos + " " + word);
+//				}
+//			}
+//			// System.out.println(".");
+//		}
+//
+//		ArrayList<WordFrequency> awe1 = new ArrayList<>();
+//		awe1.addAll(wordFrequencies.values());
+//		awe1.sort((l, r) -> -(l.frequency - r.frequency));
+//
+//		ArrayList<WordFrequency> awe = awe1;
+//		return awe;
+//	}
 
-	public ArrayList<WordFrequency> parseWordFrequency(String srcText) {
-		Properties props = new Properties(); // set up pipeline properties
-		props.put("annotators", "tokenize, ssplit, pos, lemma");// , ner, truecase, parse, dcoref"); // 分词、分句、词性标注和次元信息。
-		StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
-		Map<String, WordFrequency> wordFrequencies = new HashMap<>();
-
-		Annotation document = new Annotation(srcText);
-		pipeline.annotate(document);
-		List<CoreMap> sentences = document.get(CoreAnnotations.SentencesAnnotation.class);
-		for (CoreMap sentence : sentences) {
-			for (CoreLabel token : sentence.get(CoreAnnotations.TokensAnnotation.class)) {
-				String word = token.get(CoreAnnotations.TextAnnotation.class); // 获取单词信息
-				String lema = token.get(CoreAnnotations.LemmaAnnotation.class); // 获取对应上面word的词元信息，即我所需要的词形还原后的单词
-				String pos = token.get(CoreAnnotations.PartOfSpeechAnnotation.class); // 获取对应上面word的词元信息，即我所需要的词形还原后的单词
-
-				String lemakey = lema.toLowerCase();
-				if ('a' <= lemakey.charAt(0) && lemakey.charAt(0) <= 'z') {
-					if (wordFrequencies.containsKey(lemakey)) {
-						wordFrequencies.get(lemakey).add(word);
-					} else {
-						wordFrequencies.put(lemakey, new WordFrequency(lemakey, word));
-					}
-					// System.out.print("[" + word + "/" + lema + " [" + pos + "] " +
-					// token.toString() + "]");
-
-				} else {
-					// System.out.println(pos + " " + word);
-				}
-			}
-			// System.out.println(".");
-		}
-
-		ArrayList<WordFrequency> awe1 = new ArrayList<>();
-		awe1.addAll(wordFrequencies.values());
-		awe1.sort((l, r) -> -(l.frequency - r.frequency));
-
-		ArrayList<WordFrequency> awe = awe1;
-		return awe;
-	}
-
+	/**
+	 * CC Coordinating conjunction 连接词
+	 * 
+	 * CD Cardinal number 基数词
+	 * 
+	 * DT Determiner 限定词（如this,that,these,those,such，不定限定词：no,s
+	 * ome,any,each,every,enough,either,neither,all,both,half,several,many,much,(a)
+	 * few,(a) little,other,another. 4. EX Existential there 存在句
+	 * 
+	 * FW Foreign word 外来词
+	 * 
+	 * IN Preposition or subordinating conjunction 介词或从属连词
+	 * 
+	 * JJ Adjective 形容词或序数词
+	 * 
+	 * JJR Adjective, comparative 形容词比较级
+	 * 
+	 * JJS Adjective, superlative 形容词最高级
+	 * 
+	 * LS List item marker 列表标示
+	 * 
+	 * MD Modal 情态助动词
+	 * 
+	 * NN Noun, singular or mass 常用名词 单数形式
+	 * 
+	 * NNS Noun, plural 常用名词 复数形式
+	 * 
+	 * NNP Proper noun, singular 专有名词，单数形式
+	 * 
+	 * NNPS Proper noun, plural 专有名词，复数形式
+	 * 
+	 * PDT Predeterminer 前位限定词
+	 * 
+	 * POS Possessive ending 所有格结束词
+	 * 
+	 * PRP Personal pronoun 人称代词
+	 * 
+	 * PRP$ Possessive pronoun 所有格代名词
+	 * 
+	 * RB Adverb 副词
+	 * 
+	 * RBR Adverb, comparative 副词比较级
+	 * 
+	 * RBS Adverb, superlative 副词最高级
+	 * 
+	 * RP Particle 小品词
+	 * 
+	 * SYM Symbol 符号
+	 * 
+	 * TO to 作为介词或不定式格式
+	 * 
+	 * UH Interjection 感叹词
+	 * 
+	 * VB Verb, base form 动词基本形式
+	 * 
+	 * VBD Verb, past tense 动词过去式
+	 * 
+	 * VBG Verb, gerund or present participle 动名词和现在分词
+	 * 
+	 * VBN Verb, past participle 过去分词
+	 * 
+	 * VBP Verb, non-3rd person singular present 动词非第三人称单数
+	 * 
+	 * VBZ Verb, 3rd person singular present 动词第三人称单数
+	 * 
+	 * WDT Wh-determiner 限定词（如关系限定词：whose,which.疑问限定词： what,which,whose.）
+	 * 
+	 * WPWh-pronoun 代词（who whose which）
+	 * 
+	 * WP$ Possessive wh-pronoun 所有格代词
+	 * 
+	 * WRB Wh-adverb疑问代词（how where when） ————————————————
+	 * 版权声明：本文为CSDN博主「ROOOOOOM」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
+	 * 原文链接：https://wangzeling.blog.csdn.net/article/details/106314579
+	 * 
+	 * @param srcText
+	 * @return
+	 */
 	public StringBuffer parseWords(String srcText) {
 		Properties props = new Properties(); // set up pipeline properties
 		props.put("annotators", "tokenize, ssplit, pos, lemma");// , ner, truecase, parse, dcoref"); // 分词、分句、词性标注和次元信息。
@@ -147,6 +225,8 @@ public class StanfordNLPStemmer {
 		Map<String, WordFrequency> wordFrequencies = new HashMap<>();
 
 		StringBuffer sb = new StringBuffer();
+		
+		Map<String,List<String>> posList = new HashMap<>();
 
 		Annotation document = new Annotation(srcText);
 		pipeline.annotate(document);
@@ -157,14 +237,14 @@ public class StanfordNLPStemmer {
 			int sentenceOffsetEnd = sentence.get(CoreAnnotations.CharacterOffsetEndAnnotation.class); // 获取对应上面word的词元信息，即我所需要的词形还原后的单词
 
 			if (sentenceOffsetBegin > offset) {
-				sb.append(srcText.substring(offset, sentenceOffsetBegin).replaceAll("\n", "<br/>"));
+				sb.append(srcText.substring(offset, sentenceOffsetBegin)/*.replaceAll("\n", "<br/>")*/);
 			}
 			offset = sentenceOffsetBegin;
 
-//			sb.append('{');
+			sb.append("<span class=\"sentence\">");
 			for (CoreLabel token : sentence.get(CoreAnnotations.TokensAnnotation.class)) {
 				String word = token.get(CoreAnnotations.TextAnnotation.class); // 获取单词信息
-				String lema = token.get(CoreAnnotations.LemmaAnnotation.class); // 获取对应上面word的词元信息，即我所需要的词形还原后的单词
+				String lemma = token.get(CoreAnnotations.LemmaAnnotation.class); // 获取对应上面word的词元信息，即我所需要的词形还原后的单词
 				String pos = token.get(CoreAnnotations.PartOfSpeechAnnotation.class); // 获取对应上面word的词元信息，即我所需要的词形还原后的单词
 				int wordOffsetBegin = token.get(CoreAnnotations.CharacterOffsetBeginAnnotation.class); // 获取对应上面word的词元信息，即我所需要的词形还原后的单词
 				int wordOffsetEnd = token.get(CoreAnnotations.CharacterOffsetEndAnnotation.class); // 获取对应上面word的词元信息，即我所需要的词形还原后的单词
@@ -173,77 +253,89 @@ public class StanfordNLPStemmer {
 					sb.append(srcText.substring(offset, wordOffsetBegin).replaceAll("\n", "<br/>"));
 				}
 
+				if(!posList.containsKey(pos)) {
+					posList.put(pos, new ArrayList<>());
+				}
+				
+				posList.get(pos).add(word);
+				
 				boolean comma = false;
-				WordDefine cocaWord;
+				WordDefine wordDefine = null;
+				WordDefine lemmaDefine = null;
+
 				if (cocaWords.containsKey(word)) {
-					cocaWord = cocaWords.get(word);
-				} else if (cocaWords.containsKey(lema)) {
-					cocaWord = cocaWords.get(lema);
+					wordDefine = cocaWords.get(word);
+				}
+
+				if (cocaWords.containsKey(lemma)) {
+					lemmaDefine = cocaWords.get(lemma);
 				} else {
-					String lemakey = lema.toLowerCase();
+					String lemakey = lemma.toLowerCase();
 					if (cocaWords.containsKey(lemakey)) {
-						cocaWord = cocaWords.get(lemakey);
-					} else if (!('a' <= lemakey.charAt(0) && lemakey.charAt(0) <= 'z')) {
+						lemmaDefine = cocaWords.get(lemakey);
+					} else if (!('a' <= lemakey.charAt(0) && lemakey.charAt(0) <= 'z')) {// 非字母开始
 //						sb.append(word);
 						comma = true;
-						cocaWord = null;
 					} else if (!('a' <= lemakey.charAt(lemakey.length() - 1)
-							&& lemakey.charAt(lemakey.length() - 1) <= 'z')) {
-						String lemaAbbr = lema.substring(0, lema.length() - 1);
+							&& lemakey.charAt(lemakey.length() - 1) <= 'z')) {// 非字母结束
+						String lemaAbbr = lemma.substring(0, lemma.length() - 1);
 						if (cocaWords.containsKey(lemaAbbr)) {
-							cocaWord = cocaWords.get(lemaAbbr);
-						} else {
-							cocaWord = null;
+							lemmaDefine = cocaWords.get(lemaAbbr);
 						}
-					} else {
-						cocaWord = null;
 					}
 				}
 
-				if (cocaWord != null) {
-					if (cocaWord.getCocaLevel() > 5) {
+				// 后期再考虑下述情况
+				if (wordDefine != null && lemmaDefine == null) {
+					log.debug("ERROR :{}  {}", word, lemma);
+				}
+
+				if (lemmaDefine != null) {
+					log.debug("{} {} {} {} {} {}", word, lemma, pos, lemmaDefine.getCocaLevel(),
+							lemmaDefine.getCocaRankFrequency(), lemmaDefine.getCocaRawFrequency());
+					if (lemmaDefine.getCocaLevel() > 5) {
 //						sb.append("<span class=\"w\">");
 						sb.append("<ruby class='w lo'>");
 						sb.append(word);
 						sb.append("<rt>");
-						sb.append(cocaWord.getMeanBriefZh());
+						sb.append(lemmaDefine.getCocaLevel() + " " + lemmaDefine.getMeanBriefZh());
 						sb.append("</rt>");
+						sb.append("<span class=\"tooltiptext\">");
+						sb.append(lemmaDefine.getMeanZh());
+						sb.append("</span>");
 						sb.append("</ruby>");
-//						sb.append("<span class=\"tooltiptext\">");
-//						sb.append(cocaWord.meaning);
 //						sb.append("</span>");
-//						sb.append("</span>");
-					} else if (cocaWord.getCocaLevel() > 3) {
+					} else if (lemmaDefine.getCocaLevel() > 3) {
 //						sb.append("<span class=\"w\">");
-						sb.append("<ruby class='w lo l" + cocaWord.getCocaLevel() + "'>");
+						sb.append("<ruby class='w lo l" + lemmaDefine.getCocaLevel() + "'>");
 						sb.append(word);
 						sb.append("<rt>");
-						sb.append(cocaWord.getMeanBriefZh());
+						sb.append(lemmaDefine.getCocaLevel() + " " + lemmaDefine.getMeanBriefZh());
 						sb.append("</rt>");
+						sb.append("<span class=\"tooltiptext\">");
+						sb.append(lemmaDefine.getMeanZh());
+						sb.append("</span>");
 						sb.append("</ruby>");
-//						sb.append("<span class=\"tooltiptext\">");
-//						sb.append(cocaWord.meaning);
 //						sb.append("</span>");
-//						sb.append("</span>");
-					} else if (cocaWord.getCocaLevel() > 1) {
+					} else if (lemmaDefine.getCocaLevel() > 1) {
 //						sb.append("<span class=\"w\">");
-						sb.append("<ruby class='w ll l" + cocaWord.getCocaLevel() + "'>");
+						sb.append("<ruby class='w ll l" + lemmaDefine.getCocaLevel() + "'>");
 						sb.append(word);
 						sb.append("<rt>");
-						sb.append(cocaWord.getMeanBriefZh());
+						sb.append(lemmaDefine.getCocaLevel() + " " + lemmaDefine.getMeanBriefZh());
 						sb.append("</rt>");
+						sb.append("<span class=\"tooltiptext\">");
+						sb.append(lemmaDefine.getMeanZh());
+						sb.append("</span>");
 						sb.append("</ruby>");
-//						sb.append("<span class=\"tooltiptext\">");
-//						sb.append(cocaWord.meaning);
 //						sb.append("</span>");
-//						sb.append("</span>");
-					} else if (cocaWord.getCocaLevel() > 1) {
-						sb.append("<ruby class='w l" + cocaWord.getCocaLevel() + "'>");
+					} else if (lemmaDefine.getCocaLevel() > 1) {
+						sb.append("<ruby class='w l" + lemmaDefine.getCocaLevel() + "'>");
 						sb.append(word);
 //						sb.append("<rt>");
-//						sb.append("<span class=\"tooltiptext\">");
-//						sb.append(cocaWord.meaning);
-//						sb.append("</span>");
+						sb.append("<span class=\"tooltiptext\">");
+						sb.append(lemmaDefine.getMeanZh());
+						sb.append("</span>");
 //						sb.append(cocaWord.level);
 //						sb.append("</rt>");
 						sb.append("</ruby>");
@@ -251,6 +343,8 @@ public class StanfordNLPStemmer {
 						sb.append(word);
 					}
 				} else if (comma) {
+					sb.append(word);
+				} else if ("n't".equals(lemma) || "n’t".equals(lemma)) {
 					sb.append(word);
 				} else {
 					sb.append("<ruby class='levelUnknown'>");
@@ -261,10 +355,15 @@ public class StanfordNLPStemmer {
 				offset = wordOffsetEnd;
 			}
 			// System.out.println(".");
-//			sb.append('}');
+			sb.append("</span>");
 		}
+		log.debug("{}", sb);
+		
+//		for (String	pos : posList.keySet()) {
+//			log.debug("{} > {}",pos,posList.get(pos));
+//			
+//		}
 
-		log.debug("{}",sb);
 		return sb;
 	}
 
