@@ -73,8 +73,8 @@ public class StanfordNLPStemmer {
 		Map<String, WordFrequency> wordFrequencies = new HashMap<>();
 
 		StringBuffer sb = new StringBuffer();
-		
-		Map<String,List<String>> posList = new HashMap<>();
+
+		Map<String, List<String>> posList = new HashMap<>();
 
 		Annotation document = new Annotation(srcText);
 		pipeline.annotate(document);
@@ -85,7 +85,7 @@ public class StanfordNLPStemmer {
 			int sentenceOffsetEnd = sentence.get(CoreAnnotations.CharacterOffsetEndAnnotation.class); // 获取对应上面word的词元信息，即我所需要的词形还原后的单词
 
 			if (sentenceOffsetBegin > offset) {
-				sb.append(srcText.substring(offset, sentenceOffsetBegin)/*.replaceAll("\n", "<br/>")*/);
+				sb.append(srcText.substring(offset, sentenceOffsetBegin)/* .replaceAll("\n", "<br/>") */);
 			}
 			offset = sentenceOffsetBegin;
 
@@ -101,12 +101,12 @@ public class StanfordNLPStemmer {
 					sb.append(srcText.substring(offset, wordOffsetBegin).replaceAll("\n", "</span><span class=\"sentence\">"));
 				}
 
-				if(!posList.containsKey(pos)) {
+				if (!posList.containsKey(pos)) {
 					posList.put(pos, new ArrayList<>());
 				}
-				
+
 				posList.get(pos).add(word);
-				
+
 				boolean comma = false;
 				WordDefine wordDefine = null;
 				WordDefine lemmaDefine = null;
@@ -126,11 +126,11 @@ public class StanfordNLPStemmer {
 						comma = true;
 					} else if (!('a' <= lemakey.charAt(lemakey.length() - 1)
 							&& lemakey.charAt(lemakey.length() - 1) <= 'z')) {// 非字母结束
-						String lemaAbbr = lemma.substring(0, lemma.length() - 1);
-						if (cocaWords.containsKey(lemaAbbr)) {
-							lemmaDefine = cocaWords.get(lemaAbbr);
-						}
-					}
+								String lemaAbbr = lemma.substring(0, lemma.length() - 1);
+								if (cocaWords.containsKey(lemaAbbr)) {
+									lemmaDefine = cocaWords.get(lemaAbbr);
+								}
+							}
 				}
 
 				// 后期再考虑下述情况
@@ -145,8 +145,8 @@ public class StanfordNLPStemmer {
 //						sb.append("<span class=\"w\">");
 						sb.append("<ruby class='w lo'>");
 						sb.append(word);
-						sb.append("<rt>");
-						sb.append(lemmaDefine.getCocaLevel() + " " + lemmaDefine.getMeanBriefZh());
+						sb.append("<rt class=\"lv").append(lemmaDefine.getCocaLevel()).append(">");
+						sb.append(lemmaDefine.getMeanBriefZh());
 						sb.append("</rt>");
 						sb.append("<span class=\"tooltiptext\">");
 						sb.append(lemmaDefine.getMeanZh());
@@ -157,8 +157,8 @@ public class StanfordNLPStemmer {
 //						sb.append("<span class=\"w\">");
 						sb.append("<ruby class='w lo l" + lemmaDefine.getCocaLevel() + "'>");
 						sb.append(word);
-						sb.append("<rt>");
-						sb.append(lemmaDefine.getCocaLevel() + " " + lemmaDefine.getMeanBriefZh());
+						sb.append("<rt class=\"").append(lemmaDefine.getCocaLevel()).append(">");
+						sb.append(lemmaDefine.getMeanBriefZh());
 						sb.append("</rt>");
 						sb.append("<span class=\"tooltiptext\">");
 						sb.append(lemmaDefine.getMeanZh());
@@ -206,7 +206,7 @@ public class StanfordNLPStemmer {
 			sb.append("</span>");
 		}
 		log.debug("{}", sb);
-		
+
 //		for (String	pos : posList.keySet()) {
 //			log.debug("{} > {}",pos,posList.get(pos));
 //			
