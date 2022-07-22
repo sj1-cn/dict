@@ -14,12 +14,12 @@ import com.codahale.metrics.jvm.FileDescriptorRatioGauge;
 import com.codahale.metrics.jvm.GarbageCollectorMetricSet;
 import com.codahale.metrics.jvm.MemoryUsageGaugeSet;
 import com.codahale.metrics.jvm.ThreadStatesGaugeSet;
-import com.engreader.StanfordNLPStemmer;
-import com.engreader.db.H2DB;
-import com.engreader.db.WordDefineDB;
-import com.engreader.entity.WordDefine;
-import com.engreader.entity.WordDefineStore;
 
+import cn.sj1.aireader.StanfordNLPStemmer;
+import cn.sj1.dict.WordDefine;
+import cn.sj1.dict.WordDefineStore;
+import cn.sj1.dict.db.H2DB;
+import cn.sj1.dict.db.WordDefineDB;
 import io.jooby.AccessLogHandler;
 import io.jooby.AssetHandler;
 import io.jooby.AssetSource;
@@ -84,16 +84,16 @@ public class App extends Jooby {
 //			}
 //			return html.toStandardPage("Home");
 //		});
-		H2DB h2db = null;
+		H2DB dictH2db = null;
 		try {
-			h2db = H2DB.connect("./data/db.h2");
+			dictH2db = H2DB.connect("./db/dict.h2");
 		} catch (ClassNotFoundException e) {
 			throw new UnsupportedOperationException(e);
 		} catch (SQLException e) {
 			throw new UnsupportedOperationException(e);
 		}
 
-		WordDefineStore store = initWordsStore(h2db);
+		WordDefineStore store = initWordsStore(dictH2db);
 		StanfordNLPStemmer stanfordNLPStemmer = new StanfordNLPStemmer(store.getWords());
 
 		get("/dict/{word}", ctx -> {
