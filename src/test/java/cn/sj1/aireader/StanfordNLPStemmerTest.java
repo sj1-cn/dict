@@ -14,7 +14,6 @@ import org.apache.commons.csv.CSVRecord;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import cn.sj1.aireader.StanfordNLPStemmer;
 import cn.sj1.dict.WordDefineStore;
 import cn.sj1.dict.db.H2DB;
 import cn.sj1.dict.db.WordDefineDB;
@@ -27,6 +26,13 @@ class StanfordNLPStemmerTest {
 	void setup() throws IOException, ClassNotFoundException, SQLException {
 		H2DB h2db = H2DB.connect("./dbtest/StanfordNLPStemmerTest.h2");
 		WordDefineDB db = new WordDefineDB(h2db);
+		try {
+			db.removeAll();
+			db.dropTable();
+		} catch (Exception e) {
+		}
+		db.createTable();
+		db.createIndex();
 		WordDefineStore store = new WordDefineStore(db);
 		stemmer = new StanfordNLPStemmer(store.getWords());
 	}
