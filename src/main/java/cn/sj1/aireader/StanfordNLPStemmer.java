@@ -98,7 +98,7 @@ public class StanfordNLPStemmer {
 				int wordOffsetEnd = token.get(CoreAnnotations.CharacterOffsetEndAnnotation.class); // 获取对应上面word的词元信息，即我所需要的词形还原后的单词
 
 				if (wordOffsetBegin > offset) {
-					sb.append(srcText.substring(offset, wordOffsetBegin).replaceAll("\n", "<br/>"));
+					sb.append(srcText.substring(offset, wordOffsetBegin).replaceAll("\n", "</span><span class=\"sentence\">"));
 				}
 
 				if(!posList.containsKey(pos)) {
