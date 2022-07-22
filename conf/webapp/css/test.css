@@ -11,3 +11,11 @@ div.content{
     margin-left: 31px;
     margin-right: 2em;
 }
+
+pre.content{
+    line-height: 1.4em;
+    border-spacing: 0px;
+    margin-left: 31px;
+    margin-right: 2em;
+    padding-left: 1em;
+}
