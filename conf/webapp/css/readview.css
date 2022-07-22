@@ -95,7 +95,7 @@ ruby.lh{
 
 ruby.levelUnknown{
     cursor:pointer;
-    background-color: rgba(255,200,200,0.5);
+  /*  background-color: rgba(255,200,200,0.5);*/
 }
 
 /*add from codemirror*/

@@ -101,10 +101,17 @@ body{
 }
 
 rt{
+    visibility: visible;
     background-color: transparent;
-    position: relative;
-    display: block;
-    top: 10px;
+    text-align: center;
+ 
+    /* 定位 */
+    position: absolute;
+    z-index: 1;
+
+    font-size: .6em;
+    line-height: 1em;
+    left: 0;
 }
  
 /* 鼠标移动上去后显示提示框 */
@@ -123,7 +130,5 @@ rt{
     top: 0px;
 }
 
-
 span.unknown{
-/*     background-color: rgba(255,200,200,0.5);*/
 }

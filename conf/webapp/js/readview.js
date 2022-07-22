@@ -78,9 +78,9 @@ window.onload = function () {
                 // console.log(lines.length)
 
                 // attachResultToTable(lines, table);
-                $.each($("ruby"), function () {
+               /* $.each($("ruby"), function () {
                     console.log($(this).text());
-                });
+                });*/
 
                 bindRubyClick();
                 // .onclick(function(e){
