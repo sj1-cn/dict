@@ -157,7 +157,7 @@ public class StanfordNLPStemmer {
 //						sb.append("<span class=\"w\">");
 						sb.append("<ruby class='w lo l" + lemmaDefine.getCocaLevel() + "'>");
 						sb.append(word);
-						sb.append("<rt class=\"").append(lemmaDefine.getCocaLevel()).append(">");
+						sb.append("<rt class=\"lv").append(lemmaDefine.getCocaLevel()).append(">");
 						sb.append(lemmaDefine.getMeanBriefZh());
 						sb.append("</rt>");
 						sb.append("<span class=\"tooltiptext\">");
@@ -169,8 +169,8 @@ public class StanfordNLPStemmer {
 //						sb.append("<span class=\"w\">");
 						sb.append("<ruby class='w ll l" + lemmaDefine.getCocaLevel() + "'>");
 						sb.append(word);
-						sb.append("<rt>");
-						sb.append(lemmaDefine.getCocaLevel() + " " + lemmaDefine.getMeanBriefZh());
+						sb.append("<rt class=\"lv").append(lemmaDefine.getCocaLevel()).append(">");
+						sb.append(lemmaDefine.getMeanBriefZh());
 						sb.append("</rt>");
 						sb.append("<span class=\"tooltiptext\">");
 						sb.append(lemmaDefine.getMeanZh());
