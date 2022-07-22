@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import cn.sj1.dict.WordDefine;
-import cn.sj1.dict.WordDefineStore;
+import cn.sj1.dict.store.WordDefineStore;
 
 public class WordDefineHttpServlet extends HttpServlet {
 
@@ -71,7 +71,7 @@ public class WordDefineHttpServlet extends HttpServlet {
 		}
 		sb.setCharAt(sb.length() - 1, '}');
 	}
-//
+
 //	@Override
 //	protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 //		resp.setCharacterEncoding("utf-8");

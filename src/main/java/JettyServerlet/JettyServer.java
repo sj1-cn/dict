@@ -11,11 +11,11 @@ import org.eclipse.jetty.servlet.ServletHolder;
 
 import cn.sj1.aireader.StanfordNLPStemmer;
 import cn.sj1.aireader.servlet.StanfordCoreNLPHttpServlet;
-import cn.sj1.dict.WordDefineStore;
 import cn.sj1.dict.db.H2DB;
 import cn.sj1.dict.db.UserWordsDB;
 import cn.sj1.dict.db.WordDefineDB;
 import cn.sj1.dict.servlet.WordDefineHttpServlet;
+import cn.sj1.dict.store.WordDefineStore;
 import cn.sj1.user.UserWordsStore;
 import cn.sj1.user.servlet.UserWordsHttpServlet;
 

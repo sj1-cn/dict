@@ -1,4 +1,4 @@
-package app;
+package cn.sj1.app;
 
 import java.nio.charset.Charset;
 import java.nio.file.Paths;
@@ -17,9 +17,9 @@ import com.codahale.metrics.jvm.ThreadStatesGaugeSet;
 
 import cn.sj1.aireader.StanfordNLPStemmer;
 import cn.sj1.dict.WordDefine;
-import cn.sj1.dict.WordDefineStore;
 import cn.sj1.dict.db.H2DB;
 import cn.sj1.dict.db.WordDefineDB;
+import cn.sj1.dict.store.WordDefineStore;
 import io.jooby.AccessLogHandler;
 import io.jooby.AssetHandler;
 import io.jooby.AssetSource;

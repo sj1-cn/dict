@@ -1,10 +1,11 @@
-package cn.sj1.dict;
+package cn.sj1.dict.store;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cn.sj1.dict.WordDefine;
 import cn.sj1.dict.db.WordDefineDB;
 
 public class WordDefineStore {
@@ -24,7 +25,7 @@ public class WordDefineStore {
 
 		List<WordDefine> list = db.getAll();
 		for (WordDefine wordDefine : list) {
-			cache.put(wordDefine.word, wordDefine);
+			cache.put(wordDefine.getWord(), wordDefine);
 		}
 		return cache.values();
 	}
@@ -35,7 +36,7 @@ public class WordDefineStore {
 		}
 		List<WordDefine> list = db.getAll();
 		for (WordDefine wordDefine : list) {
-			cache.put(wordDefine.word, wordDefine);
+			cache.put(wordDefine.getWord(), wordDefine);
 		}
 		return cache;
 	}
@@ -47,7 +48,7 @@ public class WordDefineStore {
 	public void insert(WordDefine data) {
 		boolean result = db.insert(data);
 		if (result) {
-			cache.put(data.word, data);
+			cache.put(data.getWord(), data);
 		}
 
 	}

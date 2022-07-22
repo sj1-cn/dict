@@ -14,10 +14,10 @@ import org.apache.commons.csv.CSVRecord;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import cn.sj1.dict.WordDefineStore;
 import cn.sj1.dict.db.H2DB;
 import cn.sj1.dict.db.WordDefineDB;
 import cn.sj1.dict.entity.CocaWord;
+import cn.sj1.dict.store.WordDefineStore;
 
 class StanfordNLPStemmerTest {
 	StanfordNLPStemmer stemmer;
