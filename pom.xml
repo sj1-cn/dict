@@ -1,14 +1,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
-	
+
 	<groupId>EngReader</groupId>
 	<artifactId>EngReader</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>EngReader</name>
 	<description>EngReader</description>
-	
-	<properties>	
+
+	<properties>
 		<!-- Startup class -->
 		<application.class>app.App</application.class>
 
@@ -22,17 +22,17 @@
 		<maven.compiler.parameters>true</maven.compiler.parameters>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<native.maven.plugin.version>0.9.9</native.maven.plugin.version>
-	
+
 		<corenlp.version>4.4.0</corenlp.version>
 	</properties>
-	
+
 	<dependencies>
-	<!-- Basic -->
+		<!-- Basic -->
 		<dependency>
 			<groupId>io.jooby</groupId>
 			<artifactId>jooby-jetty</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-core</artifactId>
@@ -41,8 +41,8 @@
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
 		</dependency>
-		
-	<!-- Core -->
+
+		<!-- Core -->
 		<dependency>
 			<groupId>edu.stanford.nlp</groupId>
 			<artifactId>stanford-corenlp</artifactId>
@@ -62,8 +62,12 @@
 			<classifier>models-chinese</classifier>
 		</dependency>
 
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.1.0</version>
+		</dependency>
 
-		
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-csv</artifactId>
@@ -79,7 +83,6 @@
 			<version>2.1.210</version>
 		</dependency>
 
-		
 		<!-- log -->
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
