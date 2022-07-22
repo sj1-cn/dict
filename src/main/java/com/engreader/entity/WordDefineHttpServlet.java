@@ -30,6 +30,8 @@ public class WordDefineHttpServlet extends HttpServlet {
 		sb.append("{");
 		try {
 			String wordStr = req.getPathInfo().substring(1);
+			
+			
 			WordDefine wordDefine = store.get(wordStr);
 			addToJson(sb, wordDefine);
 			sb.append(',');

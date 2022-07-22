@@ -7,7 +7,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class StanfordCoreNLPFrequencyHttpServlet extends HttpServlet {
 
@@ -25,7 +26,8 @@ public class StanfordCoreNLPFrequencyHttpServlet extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		JSONObject ret = new JSONObject();
+		 ObjectMapper mapper = new ObjectMapper();
+		ObjectNode ret = mapper.createObjectNode();
 		try {
 			String ttsTxt = req.getParameter("text");
 

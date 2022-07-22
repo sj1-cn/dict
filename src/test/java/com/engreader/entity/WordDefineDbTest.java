@@ -22,10 +22,12 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.alibaba.fastjson.JSON;
 import com.engreader.StanfordNLPStemmer;
 import com.engreader.db.H2DB;
 import com.engreader.db.WordDefineDB;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 class WordDefineDbTest {
 	H2DB h2db;
@@ -33,7 +35,7 @@ class WordDefineDbTest {
 
 	@BeforeEach
 	void setup() throws ClassNotFoundException, SQLException {
-		h2db = H2DB.connect();
+		h2db = H2DB.connect("./db/test.h2");
 		db = new WordDefineDB(h2db);
 	}
 
@@ -44,8 +46,11 @@ class WordDefineDbTest {
 
 	@Test
 	void resetTable() {
-		db.removeAll();
-		db.dropTable();
+		try {
+			db.removeAll();
+			db.dropTable();
+		} catch (Exception e) {
+		}
 		db.createTable();
 		db.createIndex();
 	}
@@ -65,14 +70,15 @@ class WordDefineDbTest {
 	}
 
 	@Test
-	void testInsertUpdate() {
+	void testInsertUpdate() throws JsonMappingException, JsonProcessingException {
 		// @formatter:off
 		String js = "{  \"word\": \"book\",\r\n" + "  \"accentUs\": \"/bʊk/\",\r\n"
 				+ "  \"meanZh\": \"n. 书，书籍；  v. 预订\",\r\n"
 				+ "  \"meanEn\": \"a set of printed pages that are fastened inside a cover so that you can turn them and read them\"}";
 		// @formatter:on
-
-		WordDefine define = JSON.parseObject(js, WordDefine.class);
+		 ObjectMapper mapper = new ObjectMapper();
+		
+		WordDefine define =  mapper.readValue(js, WordDefine.class);;
 
 		define.setId(100);
 		db.insert(define);

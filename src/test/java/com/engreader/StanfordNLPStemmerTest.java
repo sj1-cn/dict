@@ -24,7 +24,7 @@ class StanfordNLPStemmerTest {
 
 	@BeforeEach
 	void setup() throws IOException, ClassNotFoundException, SQLException {
-		H2DB h2db = H2DB.connect();
+		H2DB h2db = H2DB.connect("./db/StanfordNLPStemmerTest.h2");
 		WordDefineDB db = new WordDefineDB(h2db);
 		WordDefineStore store = new WordDefineStore(db);
 		stemmer = new StanfordNLPStemmer(store.getWords());

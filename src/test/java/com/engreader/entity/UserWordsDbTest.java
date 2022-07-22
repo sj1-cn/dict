@@ -15,7 +15,6 @@ import org.junit.jupiter.api.Test;
 
 import com.engreader.db.H2DB;
 import com.engreader.db.UserWordsDB;
-import com.engreader.entity.UserWord;
 
 class UserWordsDbTest {
 	H2DB h2db;
@@ -23,7 +22,7 @@ class UserWordsDbTest {
 
 	@BeforeEach
 	void setup() throws ClassNotFoundException, SQLException {
-		h2db = H2DB.connect();
+		h2db = H2DB.connect("./db/UserWordsDbTest.h2");
 		store = new UserWordsDB(h2db);
 	}
 

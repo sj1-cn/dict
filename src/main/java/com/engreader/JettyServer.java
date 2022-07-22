@@ -45,7 +45,7 @@ public class JettyServer {
 //		context.addServlet(TimerServlet.class, "/timer");
 //		context.addServlet(StanfordCoreNLPFrequencyHttpServlet.class, "/NLPFrequency");
 		
-		H2DB h2db = H2DB.connect();
+		H2DB h2db = H2DB.connect("./data/db.h2");
 
 		ServletHolder userWordsHttpServletHolder = initUserWordsServletHolder(h2db);
 
