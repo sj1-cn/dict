@@ -10,7 +10,7 @@
 
 	<properties>
 		<!-- Startup class -->
-		<application.class>app.App</application.class>
+		<application.class>cn.sj1.app.App</application.class>
 
 		<jooby.version>2.11.0</jooby.version>
 		<cloudevents.version>2.2.0</cloudevents.version>
@@ -172,7 +172,7 @@
 					<!--这部分可有可无,加上的话则直接生成可运行jar包 -->
 					<archive>
 						<manifest>
-							<mainClass>${exec.mainClass}</mainClass>
+							<mainClass>${application.class}</mainClass>
 						</manifest>
 					</archive>
 					<descriptorRefs>
@@ -189,7 +189,7 @@
 						<manifest>
 							<addClasspath>true</addClasspath>
 							<classpathPrefix>lib/</classpathPrefix>
-							<mainClass>${exec.mainClass}</mainClass>
+							<mainClass>${application.class}</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
