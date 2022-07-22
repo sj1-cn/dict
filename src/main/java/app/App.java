@@ -1,5 +1,6 @@
 package app;
 
+import java.nio.charset.Charset;
 import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.time.Duration;
@@ -13,6 +14,7 @@ import com.codahale.metrics.jvm.FileDescriptorRatioGauge;
 import com.codahale.metrics.jvm.GarbageCollectorMetricSet;
 import com.codahale.metrics.jvm.MemoryUsageGaugeSet;
 import com.codahale.metrics.jvm.ThreadStatesGaugeSet;
+import com.engreader.StanfordNLPStemmer;
 import com.engreader.db.H2DB;
 import com.engreader.db.WordDefineDB;
 import com.engreader.entity.WordDefine;
@@ -92,7 +94,7 @@ public class App extends Jooby {
 		}
 
 		WordDefineStore store = initWordsStore(h2db);
-//		StanfordNLPStemmer stanfordNLPStemmer = new StanfordNLPStemmer(store.getWords());
+		StanfordNLPStemmer stanfordNLPStemmer = new StanfordNLPStemmer(store.getWords());
 
 		get("/dict/{word}", ctx -> {
 			String wordStr = ctx.path("word").value();
@@ -139,6 +141,35 @@ public class App extends Jooby {
 //			} else {
 //				resp.getWriter().write(sb.toString());
 //			}
+			return sb.toString();
+		});
+
+		post("/ana/words", ctx -> {
+
+//			// StemmerTest2.parse(srcText, pipeline)
+//			resp.setHeader("Access-Control-Allow-Origin", "*");
+//			resp.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
+//			resp.setHeader("Access-Control-Max-Age", "3600");
+//			resp.setHeader("Access-Control-Allow-Headers", "x-requested-with");
+//			// 是否支持cookie跨域
+//			resp.addHeader("Access-Control-Allow-Credentials", "true");
+
+			String codecontent = ctx.form("codecontent").value();// req.getParameter("codecontent");
+			codecontent = codecontent.replaceAll("youjequalsign", "=").replaceAll("youjscryoujipttag", "script");
+
+			StringBuffer awe = stanfordNLPStemmer.parseWords(codecontent);
+
+			StringBuffer sb = new StringBuffer();
+//			sb.append("<html><head>"
+//					+ "<script src=\"./static/js/main.js\" type=\"text/javascript\"></script>"
+//					+ "<link rel=\"stylesheet\" href=\"./css/words.css\">"
+//					+ "<meta charset=\"utf-8\">"
+//					+ "</head><body>");
+			//
+			sb.append(awe);
+//			sb.append("</body></html>");
+
+			ctx.setResponseType(MediaType.html, Charset.forName("utf-8"));
 			return sb.toString();
 		});
 
