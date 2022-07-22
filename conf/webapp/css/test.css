@@ -1,0 +1,12 @@
+span.sentence{
+    /* border-bottom: 2px solod red; */
+    background-color:#fef3f0;
+}
+div.content{
+    white-space: pre-wrap !important;
+    font-family: monospace;
+    border-spacing: 0px;
+    line-height: 2em;/*add by wangshilian*/
+    font-size: 2em;
+    margin-left: 31px;
+}

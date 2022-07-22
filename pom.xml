@@ -27,11 +27,22 @@
 	</properties>
 	
 	<dependencies>
+	<!-- Basic -->
 		<dependency>
 			<groupId>io.jooby</groupId>
 			<artifactId>jooby-jetty</artifactId>
 		</dependency>
 		
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+		</dependency>
+		
+	<!-- Core -->
 		<dependency>
 			<groupId>edu.stanford.nlp</groupId>
 			<artifactId>stanford-corenlp</artifactId>
@@ -52,14 +63,6 @@
 		</dependency>
 
 
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-databind</artifactId>
-		</dependency>
 		
 		<dependency>
 			<groupId>org.apache.commons</groupId>
