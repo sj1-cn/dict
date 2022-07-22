@@ -23,6 +23,7 @@ import cn.sj1.dict.store.WordDefineStore;
 import io.jooby.AccessLogHandler;
 import io.jooby.AssetHandler;
 import io.jooby.AssetSource;
+import io.jooby.Context;
 import io.jooby.Jooby;
 import io.jooby.MediaType;
 import io.jooby.StatusCode;
@@ -121,27 +122,15 @@ public class App extends Jooby {
 		});
 
 		get("/api/words/{word}", ctx -> {
-			String wordStr = ctx.path("word").value();
+			return dict(store, ctx);
+		});
 
-//			resp.setCharacterEncoding("utf-8");
-//			resp.setHeader("content-type", "application/json;chartset=uft-8");
-			ctx.setResponseType(MediaType.json);
+		get("/api/dict/{word}", ctx -> {
+			return dictWord(store, ctx);
+		});
 
-			StringBuilder sb = new StringBuilder();
-			sb.append("{");
-
-			WordDefine wordDefine = store.get(wordStr);
-			addToJson(sb, wordDefine);
-			sb.append(',');
-			sb.append("\"ret\":0");
-			sb.append('}');
-
-//			if (req.getParameter("callback") != null) {
-//				resp.getWriter().write(req.getParameter("callback") + "(" + sb.toString() + ")");
-//			} else {
-//				resp.getWriter().write(sb.toString());
-//			}
-			return sb.toString();
+		get("/api/dict", ctx -> {
+			return dict(store, ctx);
 		});
 
 		post("/ana/words", ctx -> {
@@ -192,6 +181,68 @@ public class App extends Jooby {
 
 	}
 
+	public Object dict(WordDefineStore store, Context ctx) {
+		String words = ctx.query("words").value();
+
+//			resp.setCharacterEncoding("utf-8");
+//			resp.setHeader("content-type", "application/json;chartset=uft-8");
+		ctx.setResponseType(MediaType.json);
+		String[] ws = words.split(",");
+		
+		
+
+		StringBuilder sb = new StringBuilder();
+		
+
+		sb.append("{");
+		sb.append("\"data\":[");
+		for (String wordStr : ws) {
+			WordDefine wordDefine = store.get(wordStr);
+			addToJson(sb, wordDefine);
+			sb.append(',');
+		}
+		if(sb.charAt(sb.length()-1)==',') {
+			sb.setCharAt(sb.length()-1, ']');
+		}else {
+			sb.append("]");
+		}
+		sb.append(',');
+		sb.append("\"ret\":0");
+		sb.append('}');
+		
+
+//			if (req.getParameter("callback") != null) {
+//				resp.getWriter().write(req.getParameter("callback") + "(" + sb.toString() + ")");
+//			} else {
+//				resp.getWriter().write(sb.toString());
+//			}
+		return sb.toString();
+	}
+
+	private Object dictWord(WordDefineStore store, Context ctx) {
+		String wordStr = ctx.path("word").value();
+
+//		resp.setCharacterEncoding("utf-8");
+//		resp.setHeader("content-type", "application/json;chartset=uft-8");
+		ctx.setResponseType(MediaType.json);
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("{");
+		sb.append("\"data\":");
+		WordDefine wordDefine = store.get(wordStr);
+		addToJson(sb, wordDefine);
+		sb.append(',');
+		sb.append("\"ret\":0");
+		sb.append('}');
+
+//		if (req.getParameter("callback") != null) {
+//			resp.getWriter().write(req.getParameter("callback") + "(" + sb.toString() + ")");
+//		} else {
+//			resp.getWriter().write(sb.toString());
+//		}
+		return sb.toString();
+	}
+
 	private static WordDefineStore initWordsStore(H2DB h2db) {
 		WordDefineDB db = new WordDefineDB(h2db);
 		WordDefineStore store = new WordDefineStore(db);
@@ -200,7 +251,6 @@ public class App extends Jooby {
 	}
 
 	private void addToJson(StringBuilder sb, WordDefine w) {
-		sb.append("\"data\":");
 		sb.append('{');
 		{
 			sb.append("\"id\":").append(w.getId()).append(',');
