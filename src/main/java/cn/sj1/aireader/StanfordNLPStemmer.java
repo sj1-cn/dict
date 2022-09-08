@@ -25,46 +25,51 @@ public class StanfordNLPStemmer {
 	}
 
 	Map<String, WordDefine> cocaWords;
-//
-//	public ArrayList<WordFrequency> parseWordFrequency(String srcText) {
-//		Properties props = new Properties(); // set up pipeline properties
-//		props.put("annotators", "tokenize, ssplit, pos, lemma");// , ner, truecase, parse, dcoref"); // 分词、分句、词性标注和次元信息。
-//		StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
-//		Map<String, WordFrequency> wordFrequencies = new HashMap<>();
-//
-//		Annotation document = new Annotation(srcText);
-//		pipeline.annotate(document);
-//		List<CoreMap> sentences = document.get(CoreAnnotations.SentencesAnnotation.class);
-//		for (CoreMap sentence : sentences) {
-//			for (CoreLabel token : sentence.get(CoreAnnotations.TokensAnnotation.class)) {
-//				String word = token.get(CoreAnnotations.TextAnnotation.class); // 获取单词信息
-//				String lema = token.get(CoreAnnotations.LemmaAnnotation.class); // 获取对应上面word的词元信息，即我所需要的词形还原后的单词
-//				String pos = token.get(CoreAnnotations.PartOfSpeechAnnotation.class); // 获取对应上面word的词元信息，即我所需要的词形还原后的单词
-//
-//				String lemakey = lema.toLowerCase();
-//				if ('a' <= lemakey.charAt(0) && lemakey.charAt(0) <= 'z') {
-//					if (wordFrequencies.containsKey(lemakey)) {
-//						wordFrequencies.get(lemakey).add(word);
-//					} else {
-//						wordFrequencies.put(lemakey, new WordFrequency(lemakey, word));
-//					}
-//					// System.out.print("[" + word + "/" + lema + " [" + pos + "] " +
-//					// token.toString() + "]");
-//
-//				} else {
-//					// System.out.println(pos + " " + word);
-//				}
-//			}
-//			// System.out.println(".");
-//		}
-//
-//		ArrayList<WordFrequency> awe1 = new ArrayList<>();
-//		awe1.addAll(wordFrequencies.values());
-//		awe1.sort((l, r) -> -(l.frequency - r.frequency));
-//
-//		ArrayList<WordFrequency> awe = awe1;
-//		return awe;
-//	}
+
+	public ArrayList<WordFrequency> parseWordCount(String srcText) {
+		Properties props = new Properties(); // set up pipeline properties
+		props.put("annotators", "tokenize, ssplit, pos, lemma");// , ner, truecase, parse, dcoref"); // 分词、分句、词性标注和次元信息。
+		StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
+		Map<String, WordFrequency> wordFrequencies = new HashMap<>();
+
+		Annotation document = new Annotation(srcText);
+		pipeline.annotate(document);
+		List<CoreMap> sentences = document.get(CoreAnnotations.SentencesAnnotation.class);
+		for (CoreMap sentence : sentences) {
+			for (CoreLabel token : sentence.get(CoreAnnotations.TokensAnnotation.class)) {
+				String word = token.get(CoreAnnotations.TextAnnotation.class); // 获取单词信息
+				String lema = token.get(CoreAnnotations.LemmaAnnotation.class); // 获取对应上面word的词元信息，即我所需要的词形还原后的单词
+				String pos = token.get(CoreAnnotations.PartOfSpeechAnnotation.class); // 获取对应上面word的词元信息，即我所需要的词形还原后的单词
+
+				String lemakey = lema.toLowerCase();
+				if ('a' <= lemakey.charAt(0) && lemakey.charAt(0) <= 'z') {
+					if (wordFrequencies.containsKey(lemakey)) {
+						wordFrequencies.get(lemakey).add(word);
+					} else {
+						WordFrequency wordFrequency = new WordFrequency(lemakey, word);
+						if (cocaWords.containsKey(lemakey)) {
+							WordDefine wordDefine = cocaWords.get(lemakey);
+							wordFrequency.setWordDefine(wordDefine);
+						}
+						wordFrequencies.put(lemakey, wordFrequency);
+					}
+					// System.out.print("[" + word + "/" + lema + " [" + pos + "] " +
+					// token.toString() + "]");
+
+				} else {
+					// System.out.println(pos + " " + word);
+				}
+			}
+			// System.out.println(".");
+		}
+
+		ArrayList<WordFrequency> awe1 = new ArrayList<>();
+		awe1.addAll(wordFrequencies.values());
+		awe1.sort((l, r) -> -(l.frequency - r.frequency));
+
+		ArrayList<WordFrequency> awe = awe1;
+		return awe;
+	}
 
 	public StringBuffer parseWords(String srcText) {
 		Properties props = new Properties(); // set up pipeline properties
@@ -98,7 +103,7 @@ public class StanfordNLPStemmer {
 				int wordOffsetEnd = token.get(CoreAnnotations.CharacterOffsetEndAnnotation.class); // 获取对应上面word的词元信息，即我所需要的词形还原后的单词
 
 				if (wordOffsetBegin > offset) {
-					sb.append(srcText.substring(offset, wordOffsetBegin));//.replaceAll("\n", "</span><span class=\"sentence\">"));
+					sb.append(srcText.substring(offset, wordOffsetBegin));// .replaceAll("\n", "</span><span class=\"sentence\">"));
 				}
 
 				if (!posList.containsKey(pos)) {
@@ -213,31 +218,5 @@ public class StanfordNLPStemmer {
 //		}
 
 		return sb;
-	}
-
-	static class WordFrequency {
-		String lema;
-		int frequency;
-		Map<String, Integer> sp = new HashMap<>();
-
-		public WordFrequency(String lema, String word) {
-			this.lema = lema;
-			sp.put(word, 1);
-			frequency = 1;
-		}
-
-		void add(String word) {
-			frequency++;
-			if (sp.containsKey(word)) {
-				sp.put(word, sp.get(word) + 1);
-			} else {
-				sp.put(word, 1);
-			}
-		}
-
-		@Override
-		public String toString() {
-			return lema + "," + frequency + ",\"" + sp.toString() + "\"";
-		}
 	}
 }

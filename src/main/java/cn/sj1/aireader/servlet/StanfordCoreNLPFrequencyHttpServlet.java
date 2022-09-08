@@ -1,6 +1,7 @@
 package cn.sj1.aireader.servlet;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -10,13 +11,16 @@ import javax.servlet.http.HttpServletResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import cn.sj1.aireader.StanfordNLPStemmer;
+import cn.sj1.aireader.WordFrequency;
+
 public class StanfordCoreNLPFrequencyHttpServlet extends HttpServlet {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-
+	StanfordNLPStemmer stanfordNLPStemmer = new StanfordNLPStemmer(null);
 
 	public StanfordCoreNLPFrequencyHttpServlet() {
 		super();
@@ -52,14 +56,14 @@ public class StanfordCoreNLPFrequencyHttpServlet extends HttpServlet {
 		String codecontent = req.getParameter("codecontent");
 		codecontent = codecontent.replaceAll("youjequalsign", "=").replaceAll("youjscryoujipttag", "script");
 
-//		ArrayList<WordFrequency> awe = StanfordNLPStemmer.parseWordFrequency(codecontent);
+		ArrayList<WordFrequency> awe = stanfordNLPStemmer.parseWordCount(codecontent);
 //
 		StringBuffer sb = new StringBuffer();
-//
-//		for (int i = 0; i < awe.size(); i++) {
-//			sb.append(awe.get(i).toString());
-//			sb.append('\n');
-//		}
+
+		for (int i = 0; i < awe.size(); i++) {
+			sb.append(awe.get(i).toString());
+			sb.append('\n');
+		}
 
 		resp.setCharacterEncoding("utf-8");
 		resp.getWriter().write(sb.toString());

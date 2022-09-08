@@ -47,33 +47,33 @@ public class JettyServer {
 //		context.addServlet(TimerServlet.class, "/timer");
 //		context.addServlet(StanfordCoreNLPFrequencyHttpServlet.class, "/NLPFrequency");
 		
-		H2DB h2db = H2DB.connect("./data/db.h2");
+//		H2DB h2db = H2DB.connect("./data/db.h2");
 
-		ServletHolder userWordsHttpServletHolder = initUserWordsServletHolder(h2db);
-
-		context.addServlet(userWordsHttpServletHolder, "/api/userwords/");
-		context.addServlet(userWordsHttpServletHolder, "/api/userwords/*");
-
-		WordDefineStore store = initWordsStore(h2db);
-
-		{
-			ServletHolder holder = initNLPServletHolder(store);
-			context.addServlet(holder, "/ana/words");
-		}
-
-		{
-			ServletHolder holder = initWordsServletHolder(store);
-			context.addServlet(holder, "/api/words/");
-			context.addServlet(holder, "/api/words/*");
-		}
-
-		HandlerList handlers = new HandlerList();
-		handlers.setHandlers(new Handler[] { resource_handler, context });
-
-		server.setHandler(handlers);
-
-		server.start();
-		server.join();
+//		ServletHolder userWordsHttpServletHolder = initUserWordsServletHolder(h2db);
+//
+//		context.addServlet(userWordsHttpServletHolder, "/api/userwords/");
+//		context.addServlet(userWordsHttpServletHolder, "/api/userwords/*");
+//
+//		WordDefineStore store = initWordsStore(h2db);
+//
+//		{
+//			ServletHolder holder = initNLPServletHolder(store);
+//			context.addServlet(holder, "/ana/words");
+//		}
+//
+//		{
+//			ServletHolder holder = initWordsServletHolder(store);
+//			context.addServlet(holder, "/api/words/");
+//			context.addServlet(holder, "/api/words/*");
+//		}
+//
+//		HandlerList handlers = new HandlerList();
+//		handlers.setHandlers(new Handler[] { resource_handler, context });
+//
+//		server.setHandler(handlers);
+//
+//		server.start();
+//		server.join();
 	}
 
 	private static WordDefineStore initWordsStore(H2DB h2db) {

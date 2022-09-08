@@ -2,8 +2,12 @@ package cn.sj1.app;
 
 import java.nio.charset.Charset;
 import java.nio.file.Paths;
-import java.sql.SQLException;
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.sql.DataSource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +20,7 @@ import com.codahale.metrics.jvm.MemoryUsageGaugeSet;
 import com.codahale.metrics.jvm.ThreadStatesGaugeSet;
 
 import cn.sj1.aireader.StanfordNLPStemmer;
+import cn.sj1.aireader.WordFrequency;
 import cn.sj1.dict.WordDefine;
 import cn.sj1.dict.db.H2DB;
 import cn.sj1.dict.db.WordDefineDB;
@@ -27,7 +32,9 @@ import io.jooby.Context;
 import io.jooby.Jooby;
 import io.jooby.MediaType;
 import io.jooby.StatusCode;
+import io.jooby.hikari.HikariModule;
 import io.jooby.metrics.MetricsModule;
+import mesoor.datasource.pgdb.DatabaseJoobyApp;
 
 public class App extends Jooby {
 
@@ -57,8 +64,11 @@ public class App extends Jooby {
 		assets("/static/lib/*", new AssetHandler(wwwlib).setMaxAge(Duration.ofDays(365)));
 		assets("/static/*", new AssetHandler(www).setETag(true).setMaxAge(Duration.ofDays(1)));
 
+		install(new HikariModule());
+		mount("/db", new DatabaseJoobyApp());
+
 		assets("/?*", new AssetHandler("index.html", www));
-//
+
 //		post("/pdfbox/upload", ctx -> {
 //			return uploadFile(ctx);
 //		});
@@ -86,13 +96,8 @@ public class App extends Jooby {
 //			return html.toStandardPage("Home");
 //		});
 		H2DB dictH2db = null;
-		try {
-			dictH2db = H2DB.connect("./db/dict.h2");
-		} catch (ClassNotFoundException e) {
-			throw new UnsupportedOperationException(e);
-		} catch (SQLException e) {
-			throw new UnsupportedOperationException(e);
-		}
+		DataSource ds = require(DataSource.class);
+		dictH2db = new H2DB(ds);
 
 		WordDefineStore store = initWordsStore(dictH2db);
 		StanfordNLPStemmer stanfordNLPStemmer = new StanfordNLPStemmer(store.getWords());
@@ -142,9 +147,14 @@ public class App extends Jooby {
 //			resp.setHeader("Access-Control-Allow-Headers", "x-requested-with");
 //			// 是否支持cookie跨域
 //			resp.addHeader("Access-Control-Allow-Credentials", "true");
-
-			String codecontent = ctx.form("codecontent").value();// req.getParameter("codecontent");
-			codecontent = codecontent.replaceAll("youjequalsign", "=").replaceAll("youjscryoujipttag", "script");
+			MediaType requestType = ctx.getRequestType();
+			String codecontent = "";
+			if (requestType == MediaType.form) {
+				codecontent = ctx.form("codecontent").value();// req.getParameter("codecontent");
+				codecontent = codecontent.replaceAll("youjequalsign", "=").replaceAll("youjscryoujipttag", "script");
+			} else if (requestType == MediaType.text) {
+				codecontent = ctx.body().value();
+			}
 
 			StringBuffer awe = stanfordNLPStemmer.parseWords(codecontent);
 
@@ -160,6 +170,92 @@ public class App extends Jooby {
 
 			ctx.setResponseType(MediaType.html, Charset.forName("utf-8"));
 			return sb.toString();
+		});
+
+		post("/ana/count-text-word", ctx -> {
+
+			MediaType requestType = ctx.getRequestType();
+
+			String codecontent = "";
+			if (requestType == MediaType.form) {
+				codecontent = ctx.form("codecontent").value();// req.getParameter("codecontent");
+				codecontent = codecontent.replaceAll("youjequalsign", "=").replaceAll("youjscryoujipttag", "script");
+			} else if (requestType == MediaType.text) {
+				codecontent = ctx.body().value();
+			}
+
+//			// StemmerTest2.parse(srcText, pipeline)
+//			resp.setHeader("Access-Control-Allow-Origin", "*");
+//			resp.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
+//			resp.setHeader("Access-Control-Max-Age", "3600");
+//			resp.setHeader("Access-Control-Allow-Headers", "x-requested-with");
+//			// 是否支持cookie跨域
+//			resp.addHeader("Access-Control-Allow-Credentials", "true");
+
+			ArrayList<WordFrequency> awe = stanfordNLPStemmer.parseWordCount(codecontent);
+			//
+			StringBuffer sb = new StringBuffer();
+			if (awe.size() > 0) {
+				sb.append("[");
+				for (int i = 0; i < awe.size(); i++) {
+					WordFrequency w = awe.get(i);
+					sb.append("\n{");
+					sb.append("\"word\":\"");
+					sb.append(w.getLema());
+					sb.append("\",\"count\":");
+					sb.append(w.getFrequency());
+					sb.append(",\"details\":{");
+
+					Map<String, Integer> sp = w.getSp();
+					if (sp.size() > 0) {
+						for (Entry<String, Integer> entry : sp.entrySet()) {
+							String key = entry.getKey();
+							int val = entry.getValue();
+							sb.append("\"");
+							sb.append(key);
+							sb.append("\":");
+							sb.append(val);
+							sb.append(",");
+						}
+						sb.setCharAt(sb.length() - 1, '}');
+					}
+
+					WordDefine define = w.getWordDefine();
+					if (define != null) {
+						sb.append(",\"define\":{");
+						{
+							sb.append("\"freq\":");
+							sb.append(define.getFreq());
+							sb.append(",");
+
+							sb.append("\"cocaLevel\":");
+							sb.append(define.getCocaLevel());
+							sb.append(",");
+
+							sb.append("\"meanBriefZh\":");
+							sb.append(define.getMeanBriefZh());
+							sb.append(",");
+							
+							sb.append("\"cocaRankFrequency\":");
+							sb.append(define.getCocaRankFrequency());
+							sb.append(",");
+						}
+						sb.setCharAt(sb.length() - 1, '}');
+					}
+
+					sb.append("},");
+//				sb.append(wordFrequency.toString());
+//				
+//
+////				return lema + "," + frequency + ",\"" + sp.toString() + "\"";
+//				sb.append('\n');
+				}
+				sb.setCharAt(sb.length() - 1, ']');
+			} else {
+				sb.append("[]");
+			}
+
+			return sb;
 		});
 
 		get("/sm/{name}", ctx -> {
@@ -188,11 +284,8 @@ public class App extends Jooby {
 //			resp.setHeader("content-type", "application/json;chartset=uft-8");
 		ctx.setResponseType(MediaType.json);
 		String[] ws = words.split(",");
-		
-		
 
 		StringBuilder sb = new StringBuilder();
-		
 
 		sb.append("{");
 		sb.append("\"data\":[");
@@ -201,15 +294,14 @@ public class App extends Jooby {
 			addToJson(sb, wordDefine);
 			sb.append(',');
 		}
-		if(sb.charAt(sb.length()-1)==',') {
-			sb.setCharAt(sb.length()-1, ']');
-		}else {
+		if (sb.charAt(sb.length() - 1) == ',') {
+			sb.setCharAt(sb.length() - 1, ']');
+		} else {
 			sb.append("]");
 		}
 		sb.append(',');
 		sb.append("\"ret\":0");
 		sb.append('}');
-		
 
 //			if (req.getParameter("callback") != null) {
 //				resp.getWriter().write(req.getParameter("callback") + "(" + sb.toString() + ")");

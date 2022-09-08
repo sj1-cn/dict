@@ -20,7 +20,7 @@ public class UserWordsDB {
 
 	public void createTable() {
 		try {
-			Statement stmt = this.h2db.conn.createStatement();
+			Statement stmt = this.h2db.getConn().createStatement();
 			stmt.execute("CREATE TABLE USERWORDS(ID INTEGER,USERID INTEGER,WORD VARCHAR,UPDATED TIMESTAMP)");
 			stmt.close();
 		} catch (SQLException e) {
@@ -32,7 +32,7 @@ public class UserWordsDB {
 	//CREATE INDEX index_name	ON table_name (column_name)
 	public void createIndex() {
 		try {
-			Statement stmt = this.h2db.conn.createStatement();
+			Statement stmt = this.h2db.getConn().createStatement();
 			stmt.execute("CREATE INDEX USERID ON USERWORDS (USERID)");
 			stmt.close();
 		} catch (SQLException e) {
@@ -45,7 +45,7 @@ public class UserWordsDB {
 
 		List<UserWord> list;
 		try {
-			PreparedStatement stmt = h2db.conn
+			PreparedStatement stmt = h2db.getConn()
 				.prepareStatement("SELECT ID,USERID,WORD,UPDATED FROM USERWORDS WHERE USERID=?");
 
 			stmt.setInt(1, userid);
@@ -75,7 +75,7 @@ public class UserWordsDB {
 		PreparedStatement stmt;
 		boolean result;
 		try {
-			stmt = h2db.conn.prepareStatement("INSERT INTO USERWORDS(ID,USERID,WORD,UPDATED) VALUES(?,?,?,?)");
+			stmt = h2db.getConn().prepareStatement("INSERT INTO USERWORDS(ID,USERID,WORD,UPDATED) VALUES(?,?,?,?)");
 			int i = 1;
 			stmt.setInt(i++, data.getId());
 			stmt.setInt(i++, data.getUserId());
@@ -94,7 +94,7 @@ public class UserWordsDB {
 	public boolean insert(List<UserWord> list) {
 //		boolean result;
 		try {
-			PreparedStatement stmt = h2db.conn
+			PreparedStatement stmt = h2db.getConn()
 				.prepareStatement("INSERT INTO USERWORDS(ID,USERID,WORD,UPDATED) VALUES(?,?,?,?)");
 
 			for (UserWord data : list) {
@@ -118,7 +118,7 @@ public class UserWordsDB {
 
 	public boolean remove(int id) {
 		try {
-			PreparedStatement stmt = h2db.conn.prepareStatement("DELETE FROM USERWORDS WHERE ID=?");
+			PreparedStatement stmt = h2db.getConn().prepareStatement("DELETE FROM USERWORDS WHERE ID=?");
 			stmt.setInt(1, id);
 			stmt.execute();
 			stmt.close();
@@ -132,7 +132,7 @@ public class UserWordsDB {
 
 	public boolean remove(List<UserWord> userwords) {
 		try {
-			PreparedStatement stmt = h2db.conn.prepareStatement("DELETE FROM USERWORDS WHERE ID=?");
+			PreparedStatement stmt = h2db.getConn().prepareStatement("DELETE FROM USERWORDS WHERE ID=?");
 			for (UserWord w : userwords) {
 				stmt.setInt(1, w.getId());
 				stmt.addBatch();
