@@ -3,9 +3,10 @@ package cn.sj1.app;
 import java.nio.charset.Charset;
 import java.nio.file.Paths;
 import java.time.Duration;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import javax.sql.DataSource;
 
@@ -50,13 +51,9 @@ public class App extends Jooby {
 
 		MetricRegistry metricRegistry = new MetricRegistry();
 
-		install(new MetricsModule(metricRegistry)
-				.threadDump()
-				.ping()
-				.healthCheck("deadlock", new ThreadDeadlockHealthCheck())
-				.metric("memory", new MemoryUsageGaugeSet())
-				.metric("threads", new ThreadStatesGaugeSet())
-				.metric("gc", new GarbageCollectorMetricSet())
+		install(new MetricsModule(metricRegistry).threadDump().ping()
+				.healthCheck("deadlock", new ThreadDeadlockHealthCheck()).metric("memory", new MemoryUsageGaugeSet())
+				.metric("threads", new ThreadStatesGaugeSet()).metric("gc", new GarbageCollectorMetricSet())
 				.metric("fs", new FileDescriptorRatioGauge()));
 
 		AssetSource www = AssetSource.create(Paths.get("conf/webapp"));
@@ -107,16 +104,16 @@ public class App extends Jooby {
 
 //			resp.setCharacterEncoding("utf-8");
 //			resp.setHeader("content-type", "application/json;chartset=uft-8");
-			ctx.setResponseType(MediaType.html);
+			ctx.setResponseType(MediaType.json);
 
 			StringBuilder sb = new StringBuilder();
-			sb.append("{");
+//			sb.append("{\"word\":");
 
 			WordDefine wordDefine = store.get(wordStr);
 			addToJson(sb, wordDefine);
-			sb.append(',');
-			sb.append("\"ret\":0");
-			sb.append('}');
+//			sb.append(',');
+//			sb.append("\"ret\":0");
+//			sb.append('}');
 
 //			if (req.getParameter("callback") != null) {
 //				resp.getWriter().write(req.getParameter("callback") + "(" + sb.toString() + ")");
@@ -192,13 +189,17 @@ public class App extends Jooby {
 //			// 是否支持cookie跨域
 //			resp.addHeader("Access-Control-Allow-Credentials", "true");
 
-			ArrayList<WordFrequency> awe = stanfordNLPStemmer.parseWordCount(codecontent);
-			//
+			List<WordFrequency> referWordList = stanfordNLPStemmer.parseWordCount(codecontent);
+			List<WordFrequency> lws = referWordList.stream().filter(e -> e != null).filter(e->e.getWordDefine()!=null).filter(e->e.getWordDefine().getCocaRawFrequency()>0)
+					.sorted((l, r) -> (r.getWordDefine() != null ? r.getWordDefine().getCocaRankFrequency() : 1000000)
+							- (l.getWordDefine() != null ? l.getWordDefine().getCocaRankFrequency() : 1000000))
+					.collect(Collectors.toList());
+
 			StringBuffer sb = new StringBuffer();
-			if (awe.size() > 0) {
+			if (lws.size() > 0) {
 				sb.append("[");
-				for (int i = 0; i < awe.size(); i++) {
-					WordFrequency w = awe.get(i);
+				for (int i = 0; i < lws.size(); i++) {
+					WordFrequency w = lws.get(i);
 					sb.append("\n{");
 					sb.append("\"word\":\"");
 					sb.append(w.getLema());
@@ -222,7 +223,7 @@ public class App extends Jooby {
 
 					WordDefine define = w.getWordDefine();
 					if (define != null) {
-						sb.append(",\"define\":{");
+						sb.append(",\"definition\":{");
 						{
 							sb.append("\"freq\":");
 							sb.append(define.getFreq());
@@ -235,7 +236,10 @@ public class App extends Jooby {
 							sb.append("\"meanBriefZh\":");
 							sb.append(define.getMeanBriefZh());
 							sb.append(",");
-							
+
+							sb.append("\"cocaRawFrequency\":");
+							sb.append(define.getCocaRawFrequency());
+							sb.append(",");
 							sb.append("\"cocaRankFrequency\":");
 							sb.append(define.getCocaRankFrequency());
 							sb.append(",");

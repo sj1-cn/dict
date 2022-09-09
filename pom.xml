@@ -55,12 +55,12 @@
 			<version>${corenlp.version}</version>
 			<classifier>models</classifier>
 		</dependency>
-		<dependency>
+<!-- 		<dependency>
 			<groupId>edu.stanford.nlp</groupId>
 			<artifactId>stanford-corenlp</artifactId>
 			<version>${corenlp.version}</version>
 			<classifier>models-chinese</classifier>
-		</dependency>
+		</dependency> -->
 
 		<dependency>
 			<groupId>javax.servlet</groupId>
