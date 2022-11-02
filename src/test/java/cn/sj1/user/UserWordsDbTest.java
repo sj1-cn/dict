@@ -12,16 +12,28 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+
 import cn.sj1.dict.db.H2DB;
 import cn.sj1.dict.db.UserWordsDB;
 
 class UserWordsDbTest {
 	H2DB h2db;
 	UserWordsDB store;
+	static String dbFileName = "./dbtest/UserWordsDbTest001.h2";
 
 	@BeforeEach
 	void setup() throws ClassNotFoundException, SQLException {
-		h2db = H2DB.connect("./dbtest/UserWordsDbTest.h2");
+
+		HikariConfig hikariConfig = new HikariConfig();
+		hikariConfig.setJdbcUrl("jdbc:h2:" + dbFileName);
+		hikariConfig.setUsername("sa");
+		hikariConfig.setPassword("123");
+
+		HikariDataSource dataSource = new HikariDataSource(hikariConfig);
+		h2db = new H2DB(dataSource);
+
 		store = new UserWordsDB(h2db);
 	}
 

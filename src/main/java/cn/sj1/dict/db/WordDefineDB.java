@@ -227,48 +227,53 @@ public class WordDefineDB {
 	public boolean insert(List<WordDefine> list) {
 //		boolean result;
 		try {
-			Connection conn = h2db.getConn();
-			PreparedStatement stmt = conn.prepareStatement(
-					"INSERT INTO WORDDEFINE(ID,WORD,TENSE,ACCENT_EN,ACCENT_US,MEAN_ZH,MEAN_BRIEF_ZH,MEAN_EN,POS,FREQ,"
-							+ "COCALEVEL,COCARANKFREQUENCY,COCARAWFREQUENCY,COCADISPERSION,"
-							+ "COCA60KRANK,COCATOTAL,COCASPOKEN,COCAFICTION,COCAMAGAZINE,COCANEWSPAPER,COCAACADEMIC,"
-							+ "UPDATED) VALUES(?,?,?,?,?,?,?,?,?,?,"
-							+ "?,?,?,?,"
-							+ "?,?,?,?,?,?,?,"
-							+ "?)");
+			int len = list.size();
+			for (int i = 0; i < len;) {
+				Connection conn = h2db.getConn();
+				PreparedStatement stmt = conn.prepareStatement(
+						"INSERT INTO WORDDEFINE(ID,WORD,TENSE,ACCENT_EN,ACCENT_US,MEAN_ZH,MEAN_BRIEF_ZH,MEAN_EN,POS,FREQ,"
+								+ "COCALEVEL,COCARANKFREQUENCY,COCARAWFREQUENCY,COCADISPERSION,"
+								+ "COCA60KRANK,COCATOTAL,COCASPOKEN,COCAFICTION,COCAMAGAZINE,COCANEWSPAPER,COCAACADEMIC,"
+								+ "UPDATED) VALUES(?,?,?,?,?,?,?,?,?,?,"
+								+ "?,?,?,?,"
+								+ "?,?,?,?,?,?,?,"
+								+ "?)");
+				for (int j = 0; j < 100 && i < len; j++, i++) {
+					WordDefine data = list.get(i);
+					int k = 1;
 
-			for (WordDefine data : list) {
-				int i = 1;
-				stmt.setInt(i++, data.getId());
-				stmt.setString(i++, data.getWord());
-				stmt.setString(i++, data.getTense());
-				stmt.setString(i++, data.getAccentEn());
-				stmt.setString(i++, data.getAccentUs());
-				stmt.setString(i++, data.getMeanZh());
-				stmt.setString(i++, data.getMeanBriefZh());
-				stmt.setString(i++, data.getMeanEn());
-				stmt.setString(i++, data.getPos());
-				stmt.setInt(i++, data.getFreq());
+					stmt.setInt(k++, data.getId());
+					stmt.setString(k++, data.getWord());
+					stmt.setString(k++, data.getTense());
+					stmt.setString(k++, data.getAccentEn());
+					stmt.setString(k++, data.getAccentUs());
+					stmt.setString(k++, data.getMeanZh());
+					stmt.setString(k++, data.getMeanBriefZh());
+					stmt.setString(k++, data.getMeanEn());
+					stmt.setString(k++, data.getPos());
+					stmt.setInt(k++, data.getFreq());
 
-				stmt.setInt(i++, data.getCocaLevel());
-				stmt.setInt(i++, data.getCocaRankFrequency());
-				stmt.setInt(i++, data.getCocaRawFrequency());
-				stmt.setInt(i++, data.getCocaDispersion());
+					stmt.setInt(k++, data.getCocaLevel());
+					stmt.setInt(k++, data.getCocaRankFrequency());
+					stmt.setInt(k++, data.getCocaRawFrequency());
+					stmt.setInt(k++, data.getCocaDispersion());
 
-				stmt.setInt(i++, data.getCoca60kRank());
-				stmt.setInt(i++, data.getCocaTotal());
-				stmt.setInt(i++, data.getCocaSpoken());
-				stmt.setInt(i++, data.getCocaFiction());
-				stmt.setInt(i++, data.getCocaMagazine());
-				stmt.setInt(i++, data.getCocaNewspaper());
-				stmt.setInt(i++, data.getCocaAcademic());
+					stmt.setInt(k++, data.getCoca60kRank());
+					stmt.setInt(k++, data.getCocaTotal());
+					stmt.setInt(k++, data.getCocaSpoken());
+					stmt.setInt(k++, data.getCocaFiction());
+					stmt.setInt(k++, data.getCocaMagazine());
+					stmt.setInt(k++, data.getCocaNewspaper());
+					stmt.setInt(k++, data.getCocaAcademic());
 
-				stmt.setTimestamp(i++, new Timestamp(new Date().getTime()));
-				stmt.addBatch();
+					stmt.setTimestamp(k++, new Timestamp(new Date().getTime()));
+					stmt.addBatch();
+				}
+				stmt.executeBatch();
+				conn.commit();
+				stmt.close();
+				conn.close();
 			}
-			stmt.executeBatch();
-			conn.commit();
-			stmt.close();
 		} catch (SQLException e) {
 
 			e.printStackTrace();

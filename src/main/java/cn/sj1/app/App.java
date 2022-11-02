@@ -190,7 +190,7 @@ public class App extends Jooby {
 //			resp.addHeader("Access-Control-Allow-Credentials", "true");
 
 			List<WordFrequency> referWordList = stanfordNLPStemmer.parseWordCount(codecontent);
-			List<WordFrequency> lws = referWordList.stream().filter(e -> e != null).filter(e->e.getWordDefine()!=null).filter(e->e.getWordDefine().getCocaRawFrequency()>0)
+			List<WordFrequency> lws = referWordList.stream().filter(e -> e != null).filter(e -> e.getWordDefine() != null).filter(e -> e.getWordDefine().getCocaRawFrequency() > 0)
 					.sorted((l, r) -> (r.getWordDefine() != null ? r.getWordDefine().getCocaRankFrequency() : 1000000)
 							- (l.getWordDefine() != null ? l.getWordDefine().getCocaRankFrequency() : 1000000))
 					.collect(Collectors.toList());
@@ -233,9 +233,9 @@ public class App extends Jooby {
 							sb.append(define.getCocaLevel());
 							sb.append(",");
 
-							sb.append("\"meanBriefZh\":");
+							sb.append("\"meanBriefZh\":\"");
 							sb.append(define.getMeanBriefZh());
-							sb.append(",");
+							sb.append("\",");
 
 							sb.append("\"cocaRawFrequency\":");
 							sb.append(define.getCocaRawFrequency());
@@ -258,6 +258,9 @@ public class App extends Jooby {
 			} else {
 				sb.append("[]");
 			}
+
+			ctx.setResponseHeader("Access-Control-Allow-Origin", "*");
+			ctx.setResponseType(MediaType.json);
 
 			return sb;
 		});

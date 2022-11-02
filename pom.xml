@@ -2,11 +2,11 @@
 
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>EngReader</groupId>
-	<artifactId>EngReader</artifactId>
+	<groupId>dict</groupId>
+	<artifactId>dict</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>EngReader</name>
-	<description>EngReader</description>
+	<name>dict</name>
+	<description>dict</description>
 
 	<properties>
 		<!-- Startup class -->

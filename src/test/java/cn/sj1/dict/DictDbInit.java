@@ -15,6 +15,9 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+
 import cn.sj1.aireader.StanfordNLPStemmer;
 import cn.sj1.dict.db.H2DB;
 import cn.sj1.dict.db.WordDefineDB;
@@ -22,17 +25,26 @@ import cn.sj1.dict.entity.Coca60000;
 import cn.sj1.dict.entity.CocaWord;
 
 public class DictDbInit {
+	static String dbFileName = "./db/dict.h2";
+
 	public static void main(String[] args) throws ClassNotFoundException, IOException, SQLException {
 		DictDbInit wordsInit = new DictDbInit();
-		wordsInit.importDataFromCsv("./db/dict.h2");
+		wordsInit.importDataFromCsv(dbFileName);
 	}
 
 	H2DB h2db;
-	WordDefineDB db;
+	WordDefineDB dbWordDefinationTable;
 
 	void setup(String dir) throws ClassNotFoundException, SQLException {
-		h2db = H2DB.connect(dir);
-		db = new WordDefineDB(h2db);
+
+		HikariConfig hikariConfig = new HikariConfig();
+		hikariConfig.setJdbcUrl("jdbc:h2:" + dbFileName);
+		hikariConfig.setUsername("sa");
+		hikariConfig.setPassword("123");
+
+		HikariDataSource dataSource = new HikariDataSource(hikariConfig);
+		h2db = new H2DB(dataSource);
+		dbWordDefinationTable = new WordDefineDB(h2db);
 	}
 
 	void tearDown() throws SQLException {
@@ -41,12 +53,12 @@ public class DictDbInit {
 
 	void resetTable() {
 		try {
-			db.removeAll();
-			db.dropTable();
+			dbWordDefinationTable.removeAll();
+			dbWordDefinationTable.dropTable();
 		} catch (Exception e) {
 		}
-		db.createTable();
-		db.createIndex();
+		dbWordDefinationTable.createTable();
+		dbWordDefinationTable.createIndex();
 	}
 
 	void importDataFromCsv(String dir) throws IOException, ClassNotFoundException, SQLException {
@@ -112,8 +124,8 @@ public class DictDbInit {
 				}
 			}
 
-			db.update(needUpdated);
-			db.insert(others);
+			dbWordDefinationTable.update(needUpdated);
+			dbWordDefinationTable.insert(others);
 			System.out.println("update from COCA20000 " + needUpdated.size());
 			System.out.println("insert from COCA20000 " + others.size());
 		}
@@ -166,8 +178,8 @@ public class DictDbInit {
 				}
 			}
 
-			db.update(needUpdated);
-			db.insert(others);
+			dbWordDefinationTable.update(needUpdated);
+			dbWordDefinationTable.insert(others);
 			System.out.println("update from COCA60000 " + needUpdated.size());
 			System.out.println("insert from COCA60000 " + others.size());
 		}
@@ -202,7 +214,7 @@ public class DictDbInit {
 					new Timestamp(new Date().getTime()));
 			list.add(wd);
 		}
-		db.insert(list);
+		dbWordDefinationTable.insert(list);
 		return list;
 	}
 

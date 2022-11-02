@@ -25,6 +25,8 @@ import org.junit.jupiter.api.Test;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 
 import cn.sj1.aireader.StanfordNLPStemmer;
 import cn.sj1.dict.db.H2DB;
@@ -33,12 +35,19 @@ import cn.sj1.dict.entity.Coca60000;
 import cn.sj1.dict.entity.CocaWord;
 
 class WordDefineDbTest {
+	static String dbFileName = "./db/dict.h2";
 	H2DB h2db;
 	WordDefineDB db;
 
 	@BeforeEach
 	void setup() throws ClassNotFoundException, SQLException {
-		h2db = H2DB.connect("./dbtest/test.h2");
+		HikariConfig hikariConfig = new HikariConfig();
+		hikariConfig.setJdbcUrl("jdbc:h2:" + dbFileName);
+		hikariConfig.setUsername("sa");
+		hikariConfig.setPassword("123");
+
+		HikariDataSource dataSource = new HikariDataSource(hikariConfig);
+		h2db = new H2DB(dataSource);
 		db = new WordDefineDB(h2db);
 	}
 

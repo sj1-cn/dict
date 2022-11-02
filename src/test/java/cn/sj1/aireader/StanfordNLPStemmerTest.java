@@ -11,8 +11,12 @@ import java.util.Map;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 
 import cn.sj1.dict.db.H2DB;
 import cn.sj1.dict.db.WordDefineDB;
@@ -20,11 +24,20 @@ import cn.sj1.dict.entity.CocaWord;
 import cn.sj1.dict.store.WordDefineStore;
 
 class StanfordNLPStemmerTest {
+	static String dbFileName = "./db/dict.h2";
 	StanfordNLPStemmer stemmer;
+	H2DB h2db;
+	HikariDataSource dataSource;
 
 	@BeforeEach
 	void setup() throws IOException, ClassNotFoundException, SQLException {
-		H2DB h2db = H2DB.connect("./dbtest/StanfordNLPStemmerTest.h2");
+		HikariConfig hikariConfig = new HikariConfig();
+		hikariConfig.setJdbcUrl("jdbc:h2:" + dbFileName);
+		hikariConfig.setUsername("sa");
+		hikariConfig.setPassword("123");
+
+		dataSource = new HikariDataSource(hikariConfig);
+		h2db = new H2DB(dataSource);
 		WordDefineDB db = new WordDefineDB(h2db);
 		try {
 			db.removeAll();
@@ -35,6 +48,11 @@ class StanfordNLPStemmerTest {
 		db.createIndex();
 		WordDefineStore store = new WordDefineStore(db);
 		stemmer = new StanfordNLPStemmer(store.getWords());
+	}
+
+	@AfterEach
+	void teardown() {
+		dataSource.close();
 	}
 
 	@Test
